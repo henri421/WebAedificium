@@ -653,6 +653,31 @@ const FISS_HTML = `
     <p><b>Réserves.</b> Les valeurs recommandées (k3, k4, plancher de fct,eff) peuvent être modifiées par les Annexes Nationales belge (NBN) et luxembourgeoise (ILNAS). La 2ᵉ génération d'Eurocode (EN 1992-1-1:2023) révise la formulation de la maîtrise de la fissuration. Cet outil est une aide au calcul ; la vérification finale incombe à l'ingénieur.</p>
   </div>`;
 
+/* ---- DIAGNOSTIC TEMPORAIRE ---- */
+(function(){
+  const box=document.createElement("div");
+  box.style.cssText="position:fixed;bottom:8px;right:8px;z-index:9999;background:#14202E;color:#fff;font:11px ui-monospace,monospace;padding:10px 12px;border-radius:4px;max-width:320px;line-height:1.5;box-shadow:0 2px 10px rgba(0,0,0,.3)";
+  document.body.appendChild(box);
+  let lastErr="(aucune)";
+  window.addEventListener("error",e=>{ lastErr=e.message+" @ line "+e.lineno; update(); });
+  function update(){
+    const mq=window.matchMedia("(max-width:820px)").matches;
+    box.innerHTML =
+      "innerWidth: "+window.innerWidth+"<br>"+
+      "innerHeight: "+window.innerHeight+"<br>"+
+      "devicePixelRatio: "+window.devicePixelRatio+"<br>"+
+      "hash: "+(location.hash||"(vide)")+"<br>"+
+      "mode mobile (≤820px): "+(mq?"OUI":"non")+"<br>"+
+      "#view enfants: "+($("view")?$("view").children.length:"?")+"<br>"+
+      "#view visible h: "+($("view")?$("view").offsetHeight:"?")+"px<br>"+
+      "derniere erreur JS: "+lastErr;
+  }
+  window.addEventListener("resize",update);
+  window.addEventListener("hashchange",update);
+  setInterval(update,500);
+  update();
+})();
+
 /* ---- démarrage ---- */
 buildMenu();
 router();
