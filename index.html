@@ -224,22 +224,41 @@ const $ = id => document.getElementById(id);
 const PAGES = {
   accueil:     { title:"Accueil",                          render:renderAccueil },
   fissuration: { title:"Armature minimale de fissuration", render:renderFissuration },
-  flexion:     { title:"Flexion simple",                   render:c=>renderSoon(c,"Flexion simple","Section rectangulaire","Verification d'une section en flexion simple a l'ELU : equilibre des efforts, bras de levier, section d'acier tendu, pivot A/B.") },
   poteau:      { title:"Flambement de poteau",             render:c=>renderSoon(c,"Flambement de poteau","Instabilite","Methode de la rigidite nominale ou de la courbure nominale (EN 1992-1-1 §5.8) : elancement, effets du second ordre, moment amplifie.") },
-  tranchant:   { title:"Effort tranchant",                 render:c=>renderSoon(c,"Effort tranchant","Cisaillement","Verification a l'effort tranchant (§6.2) : beton seul VRd,c, treillis d'armatures VRd,s, bielle comprimee VRd,max.") },
+};
+
+/*
+ * Les outils de la suite vivent dans des DEPOTS SEPARES, chacun avec sa propre
+ * pile technique et sa propre adresse. Cette page les relie ; elle ne les
+ * absorbe pas. Une entree de menu porte donc soit une route interne
+ * (`["route","Libelle"]`), soit une adresse externe
+ * (`{href:"…", label:"…"}`).
+ */
+const OUTILS_EXTERNES = {
+  sectionUls: "https://henri421.github.io/section-uls/",
+  stm:        "https://henri421.github.io/STM/",
 };
 
 const MENU = [
   { group:null,                       items:[["accueil","Accueil"]] },
+  { group:"Sections",                 items:[{href:OUTILS_EXTERNES.sectionUls, label:"Verification de sections"}] },
+  { group:"Modeles bielle-tirant",    items:[{href:OUTILS_EXTERNES.stm, label:"Bielle-tirant"}] },
   { group:"Fissuration & durabilité", items:[["fissuration","Armature minimale"]] },
-  { group:"À venir",                  items:[["flexion","Flexion simple"],["poteau","Flambement de poteau"],["tranchant","Effort tranchant"]], soon:true },
+  { group:"À venir",                  items:[["poteau","Flambement de poteau"]], soon:true },
 ];
 
 function buildMenu(){
   const m=$("menu"); let h="";
   MENU.forEach(sec=>{
     if(sec.group) h+=`<div class="menu-group"><span class="menu-group-lbl">${sec.group}</span></div>`;
-    sec.items.forEach(([route,label])=>{
+    sec.items.forEach(item=>{
+      // Adresse externe : lien sortant, ouvert dans un nouvel onglet, signale
+      // comme tel. L'utilisateur doit savoir qu'il quitte cette page.
+      if(!Array.isArray(item)){
+        h+=`<a class="item" href="${item.href}" target="_blank" rel="noopener">${item.label}<span class="tag">outil</span></a>`;
+        return;
+      }
+      const [route,label]=item;
       if(sec.soon){
         h+=`<span class="item disabled">${label}<span class="tag">à venir</span></span>`;
       }else{
@@ -284,38 +303,39 @@ function renderAccueil(view){
   </div>
 
   <div class="hero">
-    <p class="lead">Cette suite rassemble des outils de vérification selon l'<b>EN 1992-1-1</b>. Chaque outil expose la chaîne de calcul complète, avec les valeurs substituées, de sorte que la formule reste lisible derrière le résultat. Sélectionnez un module dans le menu ou parmi les cartes ci-dessous.</p>
+    <p class="lead">Cette suite rassemble des outils de vérification selon l'<b>EN 1992-1-1</b>. Chaque outil expose la chaîne de calcul complète, avec les valeurs substituées, de sorte que la formule reste lisible derrière le résultat.</p>
+    <p class="lead">Les outils sont <b>indépendants</b> : chacun a son dépôt, sa page et son rythme. Cette page les relie plutôt qu'elle ne les absorbe — ce qui laisse à chacun la pile technique qui lui convient. Les cartes marquées « outil séparé » ouvrent un nouvel onglet.</p>
   </div>
 
   <div class="toolgrid">
+    <a class="tool-card" href="${OUTILS_EXTERNES.sectionUls}" target="_blank" rel="noopener">
+      <span class="status on">Outil separe</span>
+      <div class="cat">Sections</div>
+      <h3>Verification de sections</h3>
+      <p>Flexion composee droite et deviee a l'ELU, domaines d'interaction, verifications de service (contraintes, ouverture de fissures, courbure), effort tranchant &sect;6.2, dispositions constructives &sect;9.</p>
+    </a>
+    <a class="tool-card" href="${OUTILS_EXTERNES.stm}" target="_blank" rel="noopener">
+      <span class="status on">Outil separe</span>
+      <div class="cat">Modeles bielle-tirant</div>
+      <h3>Bielle-tirant</h3>
+      <p>Efforts normaux dans un treillis plan : solveur parametrique, optimisation de geometrie, generation de topologie. Fonctionne hors ligne.</p>
+    </a>
     <a class="tool-card" href="#fissuration">
-      <span class="status on">Actif</span>
-      <div class="cat">Fissuration & durabilité</div>
+      <span class="status on">Sur cette page</span>
+      <div class="cat">Fissuration &amp; durabilite</div>
       <h3>Armature minimale de fissuration</h3>
-      <p>Éléments massifs sous déformation gênée. Équation 7.1, réduction élément épais, vérification de l'ouverture de fissure.</p>
+      <p>Elements massifs sous deformation genee. Equation 7.1, reduction element epais, verification de l'ouverture de fissure.</p>
     </a>
     <span class="tool-card soon">
-      <span class="status off">À venir</span>
-      <div class="cat">Section</div>
-      <h3>Flexion simple</h3>
-      <p>Section rectangulaire à l'ELU : bras de levier, acier tendu, pivots.</p>
-    </span>
-    <span class="tool-card soon">
-      <span class="status off">À venir</span>
-      <div class="cat">Instabilité</div>
+      <span class="status off">A venir</span>
+      <div class="cat">Instabilite</div>
       <h3>Flambement de poteau</h3>
-      <p>Effets du second ordre, élancement, moment amplifié (§5.8).</p>
-    </span>
-    <span class="tool-card soon">
-      <span class="status off">À venir</span>
-      <div class="cat">Cisaillement</div>
-      <h3>Effort tranchant</h3>
-      <p>V<sub>Rd,c</sub>, treillis d'armatures, bielle comprimée (§6.2).</p>
+      <p>Effets du second ordre, elancement, moment amplifie (&sect;5.8).</p>
     </span>
   </div>
 
   <div class="foot" style="border-top:1px solid var(--line);margin-top:8px">
-    <b>Extension.</b> Pour ajouter un outil, écrire une fonction <code>render(container)</code>, l'enregistrer dans l'objet <code>PAGES</code>, puis ajouter une entrée dans <code>MENU</code>. La navigation, l'onglet actif et le routage par ancre sont automatiques. L'architecture en fichier unique fonctionne en local comme sur GitHub Pages.
+    <b>Extension.</b> Deux façons d'ajouter un outil. <b>Sur cette page</b> : écrire une fonction <code>render(container)</code>, l'enregistrer dans <code>PAGES</code>, ajouter une entrée dans <code>MENU</code> — routage et onglet actif sont automatiques. <b>Dans son propre dépôt</b> : publier l'outil sur GitHub Pages, puis ajouter son adresse à <code>OUTILS_EXTERNES</code> et une entrée <code>{href, label}</code> dans <code>MENU</code>. La seconde voie est la règle dès qu'un outil a ses propres dépendances ou sa propre suite de tests ; l'absorber ici lui coûterait l'un et l'autre.
   </div>`;
 }
 
@@ -653,30 +673,7 @@ const FISS_HTML = `
     <p><b>Réserves.</b> Les valeurs recommandées (k3, k4, plancher de fct,eff) peuvent être modifiées par les Annexes Nationales belge (NBN) et luxembourgeoise (ILNAS). La 2ᵉ génération d'Eurocode (EN 1992-1-1:2023) révise la formulation de la maîtrise de la fissuration. Cet outil est une aide au calcul ; la vérification finale incombe à l'ingénieur.</p>
   </div>`;
 
-/* ---- DIAGNOSTIC TEMPORAIRE ---- */
-(function(){
-  const box=document.createElement("div");
-  box.style.cssText="position:fixed;bottom:8px;right:8px;z-index:9999;background:#14202E;color:#fff;font:11px ui-monospace,monospace;padding:10px 12px;border-radius:4px;max-width:320px;line-height:1.5;box-shadow:0 2px 10px rgba(0,0,0,.3)";
-  document.body.appendChild(box);
-  let lastErr="(aucune)";
-  window.addEventListener("error",e=>{ lastErr=e.message+" @ line "+e.lineno; update(); });
-  function update(){
-    const mq=window.matchMedia("(max-width:820px)").matches;
-    box.innerHTML =
-      "innerWidth: "+window.innerWidth+"<br>"+
-      "innerHeight: "+window.innerHeight+"<br>"+
-      "devicePixelRatio: "+window.devicePixelRatio+"<br>"+
-      "hash: "+(location.hash||"(vide)")+"<br>"+
-      "mode mobile (≤820px): "+(mq?"OUI":"non")+"<br>"+
-      "#view enfants: "+($("view")?$("view").children.length:"?")+"<br>"+
-      "#view visible h: "+($("view")?$("view").offsetHeight:"?")+"px<br>"+
-      "derniere erreur JS: "+lastErr;
-  }
-  window.addEventListener("resize",update);
-  window.addEventListener("hashchange",update);
-  setInterval(update,500);
-  update();
-})();
+
 
 /* ---- démarrage ---- */
 buildMenu();

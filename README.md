@@ -1,16 +1,29 @@
-# Béton armé · EC2 — Outils de vérification
+# Aedificium web — Outils de vérification béton armé (EC2)
 
-Suite d'outils de calcul de béton armé selon l'Eurocode 2 (EN 1992-1-1), destinée à un usage en bureau d'études. Application web à plusieurs pages, en fichier unique, sans aucune dépendance externe : tous les calculs s'exécutent localement dans le navigateur et aucune donnée n'est transmise.
+Point d'entrée d'une suite d'outils de calcul de béton armé selon l'Eurocode 2 (EN 1992-1-1), destinée à un usage en bureau d'études. Tous les calculs s'exécutent localement dans le navigateur et aucune donnée n'est transmise.
 
-## Outils disponibles
+**Cette page relie les outils, elle ne les absorbe pas.** Chaque outil vit dans son propre dépôt, avec sa propre pile technique, sa propre suite de tests et son propre rythme de publication. C'est un choix : absorber ici un outil qui a des dépendances et des tests lui coûterait les deux.
 
-Le premier module, actif, calcule l'armature minimale de maîtrise de la fissuration pour les éléments massifs sous déformation gênée (radiers, poutres épaisses, voiles bridés) : équation 7.1, réduction pour élément épais selon la logique de l'EN 1992-3, contrôle de non-fragilité, et vérification de l'ouverture de fissure réelle par les équations 7.8 à 7.11. Une coupe de section se redessine en direct avec la zone tendue effective et les armatures à l'échelle. Trois modules supplémentaires (flexion simple, flambement de poteau, effort tranchant) sont réservés dans le menu et à compléter.
+## Les outils
+
+| Outil | Où | Ce qu'il fait |
+|---|---|---|
+| **Vérification de sections** | [dépôt séparé](https://github.com/henri421/section-uls) · [ouvrir](https://henri421.github.io/section-uls/) | Flexion composée droite et déviée à l'ELU, domaines d'interaction, vérifications de service (contraintes, ouverture de fissures, courbure), effort tranchant §6.2, dispositions constructives §9, fissuration des éléments massifs |
+| **Bielle-tirant** | [dépôt séparé](https://github.com/henri421/STM) · [ouvrir](https://henri421.github.io/STM/) | Efforts normaux dans un treillis plan : solveur paramétrique, optimisation de géométrie, génération de topologie. Fonctionne hors ligne |
+| **Armature minimale de fissuration** | sur cette page | Éléments massifs sous déformation gênée : équation 7.1, réduction pour élément épais, vérification de l'ouverture réelle (éq. 7.8 à 7.11), coupe de section redessinée en direct |
+| Flambement de poteau | à venir | Effets du second ordre, élancement, moment amplifié (§5.8) |
+
+La flexion simple et l'effort tranchant, autrefois réservés dans le menu de cette page, sont désormais couverts par l'outil de vérification de sections. Ils en ont été retirés plutôt que dupliqués.
 
 ## Architecture
 
 L'ensemble tient dans `index.html`. La navigation repose sur un routage par ancre (`#accueil`, `#fissuration`, ...), ce qui fait fonctionner le site de façon identique en ouverture locale par le protocole `file://` et en ligne sur GitHub Pages, sans serveur ni chargement de fragments externes.
 
-Pour ajouter un outil, il suffit d'écrire une fonction `render(container)`, de l'enregistrer dans l'objet `PAGES`, puis d'ajouter une entrée dans le tableau `MENU`. La gestion de l'onglet actif, du titre et du routage est automatique.
+Deux façons d'ajouter un outil.
+
+**Sur cette page** — écrire une fonction `render(container)`, l'enregistrer dans `PAGES`, ajouter une entrée dans `MENU`. Onglet actif, titre et routage sont automatiques.
+
+**Dans son propre dépôt** — publier l'outil sur GitHub Pages, puis ajouter son adresse à `OUTILS_EXTERNES` et une entrée `{href, label}` dans `MENU`. C'est la règle dès qu'un outil a ses propres dépendances ou sa propre suite de tests.
 
 ## Utilisation locale
 
@@ -21,7 +34,7 @@ Ouvrir `index.html` dans un navigateur récent, par double-clic. Aucune installa
 1. Pousser le dépôt sur GitHub.
 2. Ouvrir `Settings`, puis `Pages`.
 3. Sous `Build and deployment`, choisir la source `Deploy from a branch`, la branche `main` et le dossier `/ (root)`, puis enregistrer.
-4. Après une à deux minutes, l'application est accessible à `https://<compte>.github.io/beton-arme-ec2/`.
+4. Après une à deux minutes, l'application est accessible à `https://<compte>.github.io/WebAedificium/`.
 
 Cette adresse s'ouvre depuis n'importe quel navigateur, y compris une workstation d'entreprise, sans droits d'administration.
 
