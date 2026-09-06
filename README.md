@@ -26,6 +26,10 @@ Deux façons d'ajouter un outil.
 
 **Dans son propre dépôt** — publier l'outil sur GitHub Pages, puis ajouter son adresse à `OUTILS_EXTERNES` et une entrée `{href, label}` dans `MENU`. C'est la règle dès qu'un outil a ses propres dépendances ou sa propre suite de tests.
 
+## Identité graphique
+
+Les couleurs, les rayons et les deux familles typographiques sont déclarés une fois pour toutes dans le `:root` de `index.html` : c'est le même jeu de jetons que les autres outils de la suite, recopié plutôt que partagé par un CDN, pour que chaque dépôt reste ouvrable hors ligne. Aucun code hexadécimal ne doit apparaître ailleurs. Le monoespace est réservé aux nombres, aux unités et aux cotes des tracés ; les surtitres, les libellés de panneau et les boutons sont en sans, majuscules espacées. Un tracé SVG engendré en JavaScript ne voit pas les variables CSS : `fissDraw()` lit donc les jetons une seule fois par `getComputedStyle` et les nomme en tête de fonction.
+
 ## Utilisation locale
 
 Ouvrir `index.html` dans un navigateur récent, par double-clic. Aucune installation ni connexion n'est requise.
