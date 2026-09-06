@@ -90,6 +90,16 @@
 
   main{min-width:0}
   .topbar{display:none}
+  /*
+   * Le voile du menu mobile n'existe qu'en dessous de 820px.
+   *
+   * Sans cette regle de base, il n'etait masque QUE dans la requete media :
+   * au-dela de 820px il redevenait un div ordinaire, donc une CELLULE de la
+   * grille `.app`. Il occupait la premiere colonne, repoussait la navigation
+   * dans la colonne large et le contenu hors de l'ecran — la page paraissait
+   * tronquee et le volet prenait toute la place, en plein ecran seulement.
+   */
+  .scrim{display:none}
   .view-wrap{max-width:1120px;margin:0 auto;padding:0 22px}
 
   .page-h{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;
@@ -296,12 +306,12 @@ function buildMenu(){
       // Adresse externe : lien sortant, ouvert dans un nouvel onglet, signale
       // comme tel. L'utilisateur doit savoir qu'il quitte cette page.
       if(!Array.isArray(item)){
-        h+=`<a class="item" href="${item.href}" target="_blank" rel="noopener">${item.label}<span class="tag">outil</span></a>`;
+        h+=`<a class="item" href="${item.href}" target="_blank" rel="noopener">${item.label}</a>`;
         return;
       }
       const [route,label]=item;
       if(sec.soon){
-        h+=`<span class="item disabled">${label}<span class="tag">à venir</span></span>`;
+        h+=`<span class="item disabled">${label}</span>`;
       }else{
         h+=`<a class="item" href="#${route}" data-route="${route}">${label}</a>`;
       }
@@ -350,39 +360,30 @@ function renderAccueil(view){
 
   <div class="toolgrid">
     <a class="tool-card" href="${OUTILS_EXTERNES.sectionUls}" target="_blank" rel="noopener">
-      <span class="status on">Outil separe</span>
       <div class="cat">Sections</div>
       <h3>Verification de sections</h3>
       <p>Flexion composee droite et deviee a l'ELU, domaines d'interaction, verifications de service (contraintes, ouverture de fissures, courbure), effort tranchant &sect;6.2, dispositions constructives &sect;9.</p>
     </a>
     <a class="tool-card" href="${OUTILS_EXTERNES.stm}" target="_blank" rel="noopener">
-      <span class="status on">Outil separe</span>
       <div class="cat">Modeles bielle-tirant</div>
       <h3>Bielle-tirant</h3>
       <p>Efforts normaux dans un treillis plan : solveur parametrique, optimisation de geometrie, generation de topologie. Fonctionne hors ligne.</p>
     </a>
     <a class="tool-card" href="${OUTILS_EXTERNES.poinconnement}" target="_blank" rel="noopener">
-      <span class="status on">Outil separe</span>
       <div class="cat">Dalles</div>
       <h3>Poinconnement</h3>
       <p>Dalles pleines au droit d'un poteau (&sect;6.4) : perimetres de controle par construction geometrique, coefficient d'excentrement, resistance avec et sans armatures, ecrasement au nu du poteau.</p>
     </a>
     <a class="tool-card" href="#fissuration">
-      <span class="status on">Sur cette page</span>
       <div class="cat">Fissuration &amp; durabilite</div>
       <h3>Armature minimale de fissuration</h3>
       <p>Elements massifs sous deformation genee. Equation 7.1, reduction element epais, verification de l'ouverture de fissure.</p>
     </a>
     <span class="tool-card soon">
-      <span class="status off">A venir</span>
       <div class="cat">Instabilite</div>
       <h3>Flambement de poteau</h3>
       <p>Effets du second ordre, elancement, moment amplifie (&sect;5.8).</p>
     </span>
-  </div>
-
-  <div class="foot" style="border-top:1px solid var(--bordure);margin-top:8px">
-    <b>Extension.</b> Deux façons d'ajouter un outil. <b>Sur cette page</b> : écrire une fonction <code>render(container)</code>, l'enregistrer dans <code>PAGES</code>, ajouter une entrée dans <code>MENU</code> — routage et onglet actif sont automatiques. <b>Dans son propre dépôt</b> : publier l'outil sur GitHub Pages, puis ajouter son adresse à <code>OUTILS_EXTERNES</code> et une entrée <code>{href, label}</code> dans <code>MENU</code>. La seconde voie est la règle dès qu'un outil a ses propres dépendances ou sa propre suite de tests ; l'absorber ici lui coûterait l'un et l'autre.
   </div>`;
 }
 
