@@ -235,14 +235,16 @@ const PAGES = {
  * (`{href:"…", label:"…"}`).
  */
 const OUTILS_EXTERNES = {
-  sectionUls: "https://henri421.github.io/section-uls/",
-  stm:        "https://henri421.github.io/STM/",
+  sectionUls:   "https://henri421.github.io/section-uls/",
+  stm:          "https://henri421.github.io/STM/",
+  poinconnement:"https://henri421.github.io/poinconnement/",
 };
 
 const MENU = [
   { group:null,                       items:[["accueil","Accueil"]] },
   { group:"Sections",                 items:[{href:OUTILS_EXTERNES.sectionUls, label:"Verification de sections"}] },
   { group:"Modeles bielle-tirant",    items:[{href:OUTILS_EXTERNES.stm, label:"Bielle-tirant"}] },
+  { group:"Dalles",                   items:[{href:OUTILS_EXTERNES.poinconnement, label:"Poinconnement"}] },
   { group:"Fissuration & durabilité", items:[["fissuration","Armature minimale"]] },
   { group:"À venir",                  items:[["poteau","Flambement de poteau"]], soon:true },
 ];
@@ -319,6 +321,12 @@ function renderAccueil(view){
       <div class="cat">Modeles bielle-tirant</div>
       <h3>Bielle-tirant</h3>
       <p>Efforts normaux dans un treillis plan : solveur parametrique, optimisation de geometrie, generation de topologie. Fonctionne hors ligne.</p>
+    </a>
+    <a class="tool-card" href="${OUTILS_EXTERNES.poinconnement}" target="_blank" rel="noopener">
+      <span class="status on">Outil separe</span>
+      <div class="cat">Dalles</div>
+      <h3>Poinconnement</h3>
+      <p>Dalles pleines au droit d'un poteau (&sect;6.4) : perimetres de controle par construction geometrique, coefficient d'excentrement, resistance avec et sans armatures, ecrasement au nu du poteau.</p>
     </a>
     <a class="tool-card" href="#fissuration">
       <span class="status on">Sur cette page</span>
