@@ -34,6 +34,26 @@ Les couleurs, les rayons et les deux familles typographiques sont déclarés une
 
 Ouvrir `index.html` dans un navigateur récent, par double-clic. Aucune installation ni connexion n'est requise.
 
+## Tests
+
+Aucune dépendance, aucun build : le runner intégré à Node suffit.
+
+```bash
+node --test
+```
+
+Ils portent sur `asmin.js`, la chaîne d'armature minimale sous bridage centré, confrontée au cas de validation de `SPEC_correction_Asmin_bridage.md` §7 — dont toutes les valeurs ont été recalculées à la main de façon indépendante.
+
+`asmin.js` est un **script classique**, pas un module : `index.html` porte des `onclick` en ligne qui exigent la portée globale, et son script en ligne ne peut donc pas devenir un module. Un garde d'export en fin de fichier — ignoré par le navigateur — permet néanmoins à Node de le charger. C'est ce qui donne des tests sans rien installer.
+
+### Ce que ces tests verrouillent
+
+- le cas §7 : `h_c,ef` = 240 mm, `σ_s` = 202,7 MPa, **27,44 cm²/m par nappe**, en convention EC2 comme en convention allemande ;
+- l'**indépendance** de la méthode et de la convention de `k` — changer l'une ne doit pas bouger l'autre ;
+- le **forçage** : toute grandeur imposée court-circuite sa formule, alimente la suite de la chaîne, et est marquée comme imposée ;
+- un champ **vide** rend la main au calcul, un `0` impose bien zéro ;
+- une valeur hors du domaine physique **avertit sans écrêter**.
+
 ## Déploiement sur GitHub Pages
 
 1. Pousser le dépôt sur GitHub.
