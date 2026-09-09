@@ -250,6 +250,16 @@
   @media(prefers-reduced-motion:reduce){
     aside.nav{transition:none}
   }
+
+/* Une valeur forcee hors du domaine physique n'est pas un echec de
+   verification : c'est un AVERTISSEMENT. D'ou la couleur d'alerte, jamais
+   celle du refus — « une couleur de sens ne sert jamais de decor » vaut
+   aussi dans l'autre sens. */
+.avert{margin:0 0 12px}
+.avert ul{margin:0;padding:10px 14px 10px 28px;list-style:disc;
+  background:var(--alerte-fond);border-left:3px solid var(--alerte);
+  border-radius:var(--rayon-petit);color:var(--alerte);font-size:.82rem;line-height:1.45}
+.avert li+li{margin-top:6px}
 </style>
 </head>
 <body>
@@ -277,6 +287,13 @@
     <div class="view-wrap"><div id="view"></div></div>
   </main>
 </div>
+
+<!--
+  Charge AVANT le script en ligne : les deux sont des scripts classiques et
+  partagent la portee globale, donc `armatureMinimaleBridage` y est visible.
+  Le passer en module casserait les `onclick` en ligne de la page.
+-->
+<script src="./asmin.js"></script>
 
 <script>
 "use strict";
@@ -432,8 +449,14 @@ function renderSoon(view,title,cat,desc){
 /* =========================================================
    PAGE : ARMATURE MINIMALE DE FISSURATION
    ========================================================= */
-const F_IDS=["fck","s","t","mode","fcteff","fyk","sigsMode","sigsVal","h","b","c","phi","cas","wk","asprov","kt","k1","k2","k3","k4"];
-const F_DEF={fck:30,s:"0.25",t:3,mode:"impose",fcteff:2.9,fyk:500,sigsMode:"fyk",sigsVal:320,h:1000,b:1000,c:50,phi:12,cas:"traction",wk:0.3,asprov:8000,kt:0.4,k1:0.8,k2:1.0,k3:3.4,k4:0.425};
+const F_IDS=["fck","s","t","mode","fcteff","kzt","methode","convK","fyk","sigsMode","sigsVal","phistar","h","b","c","phi","cas","wk","asprov","kt","k1","k2","k3","k4",
+  // Champs de FORCAGE. Vides par defaut : un champ vide veut dire « calcule ».
+  "impFctm","impFcteff","impD1","impHcef","impK","impKc","impAct","impAceff","impSigs"];
+
+const F_DEF={fck:30,s:"0.25",t:3,mode:"impose",fcteff:2.9,kzt:0.8,methode:"din",convK:"ec2",fyk:500,sigsMode:"fyk",sigsVal:320,phistar:13.54,h:1000,b:1000,c:50,phi:12,cas:"traction",wk:0.3,asprov:8000,kt:0.4,k1:0.8,k2:1.0,k3:3.4,k4:0.425,
+  // ⚠ CHAINES VIDES et non zeros : un « 0 » dans un champ de forcage serait
+  // une valeur imposee a zero, ce qui annulerait l armature en silence.
+  impFctm:"",impFcteff:"",impD1:"",impHcef:"",impK:"",impKc:"",impAct:"",impAceff:"",impSigs:""};
 let fissState={};
 
 const fmt=(x,d=2)=>(isFinite(x)?x.toLocaleString("fr-FR",{minimumFractionDigits:d,maximumFractionDigits:d}):"—");
@@ -462,22 +485,64 @@ function fissCompute(v){
   r.bcc=Math.exp(parseFloat(v.s)*(1-Math.sqrt(28/v.t)));
   r.fctmt=(v.t<28?r.bcc:Math.pow(r.bcc,2/3))*r.fctm;
   r.fcteff=(v.mode==="auto")?r.fctmt:v.fcteff;
-  r.k=v.h<=300?1:(v.h>=800?0.65:1-(v.h-300)/500*0.35);
-  r.kc=(v.cas==="traction")?1:0.4;
-  r.Act=(v.cas==="traction")?v.b*v.h:v.b*v.h/2;
-  r.sigs=(v.sigsMode==="fyk")?v.fyk:v.sigsVal;
-  r.Asmin=r.kc*r.k*r.fcteff*r.Act/r.sigs;
-  r.AsminFace=(v.cas==="traction")?r.Asmin/2:r.Asmin;
-  r.rho=r.Asmin/(v.b*v.h);
-  r.d=v.h-v.c;
-  r.Asnf=Math.max(0.26*r.fctm/v.fyk,0.0013)*v.b*r.d;
-  r.Asgov=Math.max(r.Asmin,r.Asnf);
-  r.govWho=r.Asmin>=r.Asnf?"équation 7.1 (retrait gêné)":"non-fragilité";
-  r.hcef=Math.min(2.5*(v.h-r.d),v.h/2);
-  r.nZone=(v.cas==="traction")?2:1;
-  r.ActEff=r.nZone*v.b*r.hcef;
-  r.AsminThick=r.kc*r.k*r.fcteff*r.ActEff/r.sigs;
-  r.AcEff=r.nZone*v.b*r.hcef;
+  // La chaine d'armature minimale vit dans asmin.js, testee contre le cas de
+  // validation de SPEC_correction_Asmin_bridage.md §7. Ne pas la reecrire ici.
+  //
+  // Les champs de forcage : un champ VIDE veut dire « calcule », jamais zero.
+  // `retenu()` dans asmin.js ignore les chaines vides et les NaN — et
+  // `fissReadInputs` fait `parseFloat`, qui rend NaN sur un champ vide — donc
+  // on peut les transmettre tels quels sans les filtrer ici.
+  const impose = {
+    fctm: v.impFctm, fcteff: v.impFcteff, d1: v.impD1, hcef: v.impHcef,
+    k: v.impK, kc: v.impKc, Act: v.impAct, Aceff: v.impAceff, sigs: v.impSigs,
+  };
+
+  const am = armatureMinimaleBridage({
+    h: v.h, b: v.b, cnom: v.c, phi: v.phi,
+    fck: v.fck, fyk: v.fyk, Es: 200000,
+    wk: v.wk, kzt: v.kzt, kc: (v.cas === "traction") ? 1.0 : 0.4,
+    methode: v.methode,
+    conventionK: v.convK,
+    sollicitation: v.cas,
+    // UN SEUL selecteur pour f_ct,eff, a quatre branches, plutot que deux
+    // controles qui se recouvriraient. « impose » et « auto » fournissent la
+    // valeur directement ; « kzt » et « tardif » la laissent calculer par
+    // asmin.js, qui porte les deux regles.
+    scenario: v.mode === "tardif" ? "tardif" : "jeune",
+    ...(v.mode === "impose"
+      ? { fcteffImpose: v.fcteff }
+      : v.mode === "auto"
+        ? { fcteffImpose: r.fctmt }
+        : {}),
+    ...(v.sigsMode === "phistar"
+      ? { phiStar: v.phistar }
+      : { sigs: (v.sigsMode === "fyk") ? v.fyk : v.sigsVal }),
+    impose,
+  });
+
+  r.am = am;
+  r.k = am.k;
+  r.kc = am.kc;
+  r.fctm = am.fctm;
+  r.fcteff = am.fcteff;
+  r.Act = am.Act;
+  r.sigs = am.sigs;
+  r.hcef = am.hcef;
+  r.Asmin = am.AsMinceTotal;
+  r.AsminFace = am.AsMinceParNappe;
+  r.AsminThick = am.AsEpaisTotal;
+  r.rho = am.AsMinTotal / (v.b * v.h);
+  r.nZone = am.nappes;
+  r.ActEff = am.nappes * am.Aceff;
+
+  // La non-fragilite du §9.2.1.1 reste calculee ici : elle repond a une AUTRE
+  // question — la resistance, pas la maitrise de la fissuration — et ne fait
+  // pas partie de la chaine de bridage.
+  r.d = v.h - v.c;
+  r.Asnf = Math.max(0.26 * r.fctm / v.fyk, 0.0013) * v.b * r.d;
+  r.Asgov = Math.max(am.AsMinTotal, r.Asnf);
+  r.govWho = am.AsMinTotal >= r.Asnf ? "équation 7.1 (retrait gêné)" : "non-fragilité";
+  r.AcEff = am.nappes * am.Aceff;
   r.rhoEff=v.asprov/r.AcEff;
   r.Nr=r.kc*r.k*r.fcteff*r.Act;
   r.sigsWk=r.Nr/v.asprov;
@@ -540,12 +605,44 @@ function fissDraw(v,r){
 
 function fissRender(){
   const v=fissReadInputs(), r=fissCompute(v);
-  $("asmin").textContent=fmt0(r.Asmin);
-  $("asminface").textContent=(v.cas==="traction")?`${fmt0(r.AsminFace)} mm² par face`:"face tendue";
-  $("asminthick").textContent=fmt0(r.AsminThick);
+  const am=r.am;
+  const nappe=am.nappes===2?" par nappe":"";
+  /* Le suffixe « imposé » n'est PAS decoratif : c'est ce qui distingue une
+     valeur que la chaine a calculee d'une valeur que l'ingenieur a forcee.
+     Sans lui, une note de calcul presenterait les deux de la meme facon et ne
+     serait verifiable par personne. */
+  const marque=nom=>(am.sources[nom]==="impose"?" (imposé)":"");
+
+  $("asmin").textContent=fmt0(am.AsMinceTotal);
+  $("asminface").textContent=(v.cas==="traction")?`${fmt0(am.AsMinceParNappe)} mm²${nappe}`:"face tendue";
+  $("asminthick").textContent=fmt0(am.AsEpaisTotal);
+  $("asminborne").textContent=`zone de surface · borne ${fmt0(am.BorneTotal)} mm²`;
   $("asnf").textContent=fmt0(r.Asnf);
   $("asgov").textContent=fmt0(r.Asgov);
   $("govwho").textContent="→ "+r.govWho;
+
+  $("approche").textContent=am.approcheRetenue==="epaisse"
+    ?"approche ÉPAISSE — elle gouverne"
+    :"approche MINCE — elle gouverne";
+  $("asretenu").textContent=`${fmt0(am.AsMinParNappe)} mm²${nappe} · ${fmt0(am.AsMinTotal)} mm² au total`;
+  $("referentiel").textContent=
+    (am.methode==="ec2"?"texte EN 1992-1-1 §7.3.2(3)":"pratique allemande, branches h/d₁")
+    +" · "+(am.conventionK==="de"?"k annexe allemande":"k EC2 recommandé");
+  $("d1out").textContent=fmt0(am.d1)+" mm"+marque("d1");
+  $("hcefout").textContent=fmt0(am.hcef)+" mm"+marque("hcef");
+  $("fctmout").textContent=fmt(am.fctm,2)+" MPa"+marque("fctm");
+  $("fcteffout").textContent=fmt(am.fcteff,2)+" MPa"+marque("fcteff");
+  $("kout").textContent=fmt(am.k,3)+marque("k");
+  $("kcout").textContent=fmt(am.kc,2)+marque("kc");
+  $("actout").textContent=fmt0(am.Act)+" mm²"+marque("Act");
+  $("aceffout").textContent=fmt0(am.Aceff)+" mm²"+marque("Aceff");
+  $("sigsout").textContent=fmt(am.sigs,1)+" MPa"+marque("sigs");
+
+  /* Les avertissements SIGNALENT, ils n'ecretent pas : ecreter retirerait a
+     l'ingenieur la decision qu'il vient explicitement de prendre. */
+  $("avertissements").innerHTML=am.avertissements.length===0?""
+    :"<ul>"+am.avertissements.map(a=>"<li>"+a+"</li>").join("")+"</ul>";
+
   $("hcef").textContent=fmt0(r.hcef);
   $("aceff").textContent=fmt0(r.AcEff);
   $("rhoeff").textContent=fmt(r.rhoEff,4);
@@ -567,20 +664,29 @@ function fissSteps(v,r){
   const S=[];
   const row=(sym,expr,res)=>`<div class="step"><span class="sym">${sym}</span><span class="expr">${expr}</span><span class="res">${res}</span></div>`;
   const hd=t=>`<div class="step head">${t}</div>`;
+  /* Meme marquage que dans le panneau : le detail du calcul doit dire, lui
+     aussi, ce qui a ete impose — c'est lui qu'on relit pour verifier. */
+  const marq=nom=>(r.am.sources[nom]==="impose"?" · IMPOSÉ":"");
   S.push(hd("A · Résistance en traction du béton"));
   S.push(row("f_cm","f_ck + 8 = "+fmt0(v.fck)+" + 8",fmt0(r.fcm)+" MPa"));
   S.push(row("f_ctm",v.fck<=50?`0,30 · ${fmt0(v.fck)}^(2/3)`:`2,12 · ln(1 + ${fmt(r.fcm,0)}/10)`,fmt(r.fctm,2)+" MPa"));
   S.push(row("β_cc(t)","exp{ "+v.s+" · [1 − √(28/"+fmt0(v.t)+")] }",fmt(r.bcc,3)));
   S.push(row("f_ctm(t)",(v.t<28?"β_cc":"β_cc^(2/3)")+" · f_ctm",fmt(r.fctmt,2)+" MPa"));
-  S.push(row("f_ct,eff",v.mode==="auto"?"= f_ctm(t)":"valeur imposée",fmt(r.fcteff,2)+" MPa"));
+  S.push(row("f_ct,eff",{impose:"valeur imposée",auto:"= f_ctm(t)",kzt:`k_zt · f_ctm = ${fmt(v.kzt,2)} · ${fmt(r.fctm,2)}`,tardif:"max(f_ctm ; 3,0) — bridage tardif"}[v.mode]+marq("fcteff"),fmt(r.fcteff,2)+" MPa"));
   S.push(hd("B · Coefficients de l'équation 7.1"));
-  S.push(row("k",v.h<=300?"h ≤ 300":(v.h>=800?"h ≥ 800":"interpolation"),fmt(r.k,3)));
-  S.push(row("k_c",v.cas==="traction"?"traction pure":"flexion pure",fmt(r.kc,2)));
-  S.push(row("A_ct",v.cas==="traction"?"b · h":"b · h / 2",fmt0(r.Act)+" mm²"));
+  S.push(row("k",(v.convK==="de"?"annexe allemande · ":"EC2 · ")+(v.h<=300?"h ≤ 300":(v.h>=800?"h ≥ 800":"interpolation"))+marq("k"),fmt(r.k,3)));
+  S.push(row("k_c",(v.cas==="traction"?"traction pure":"flexion pure")+marq("kc"),fmt(r.kc,2)));
+  S.push(row("A_ct",(v.cas==="traction"?"b · h":"b · h / 2")+marq("Act"),fmt0(r.Act)+" mm²"));
+  S.push(row("d₁",("c + φ/2")+marq("d1"),fmt0(r.am.d1)+" mm"));
+  S.push(row("h_c,ef",(v.methode==="ec2"?"texte EC2 · min(2,5·d₁ ; h/2)":`pratique allemande · h/d₁ = ${fmt(r.am.ratio,1)}`)+marq("hcef"),fmt0(r.hcef)+" mm"));
+  S.push(row("A_c,ef","b · h_c,ef (une face)"+marq("Aceff"),fmt0(r.am.Aceff)+" mm²"));
   S.push(hd("C · Contrainte dans l'acier"));
-  S.push(row("σ_s",v.sigsMode==="fyk"?"= f_yk":"valeur imposée",fmt0(r.sigs)+" MPa"));
+  S.push(row("σ_s",{fyk:"= f_yk",val:"valeur imposée",phistar:`√(6·w_k·E_s·f_ct,eff / Ø*) = √(6·${fmt(v.wk,2)}·200000·${fmt(r.fcteff,2)} / ${fmt(v.phistar,2)})`}[v.sigsMode]+marq("sigs"),fmt(r.sigs,1)+" MPa"));
   S.push(hd("D · Armature minimale (éq. 7.1)"));
-  S.push(row("A_s,min",`k_c·k·f_ct,eff·A_ct/σ_s = ${fmt(r.kc,1)}·${fmt(r.k,2)}·${fmt(r.fcteff,1)}·${fmt0(r.Act)}/${fmt0(r.sigs)}`,"<b>"+fmt0(r.Asmin)+" mm²</b>"));
+  S.push(row("A_s,min mince",`k_c·k·f_ct,eff·A_ct/σ_s = ${fmt(r.kc,1)}·${fmt(r.k,2)}·${fmt(r.fcteff,1)}·${fmt0(r.Act)}/${fmt0(r.sigs)}`,fmt0(r.am.AsMinceTotal)+" mm²"));
+  S.push(row("A_s,min épais",`${r.am.nappes} · f_ct,eff·A_c,ef/σ_s — NI k NI k_c : ils reduisent l'effort a l'echelle de la section entiere, pas de la peau qui travaille`,fmt0(r.am.AsEpaisTotal)+" mm²"));
+  S.push(row("borne","k·f_ct,eff·A_ct/f_yk — en deça, l'acier plastifie a la fissuration",fmt0(r.am.BorneTotal)+" mm²"));
+  S.push(row("A_s,min retenu",`min(mince ; épais) — approche ${r.am.approcheRetenue}`,"<b>"+fmt0(r.am.AsMinTotal)+" mm² total · "+fmt0(r.am.AsMinParNappe)+" mm²"+(r.am.nappes===2?" par nappe":"")+"</b>"));
   S.push(row("ρ","A_s,min / (b·h)",fmt(r.rho*100,3)+" %"));
   S.push(hd("E · Non-fragilité (§9.2.1.1)"));
   S.push(row("d","h − c",fmt0(r.d)+" mm"));
@@ -607,18 +713,43 @@ function buildBetonTable(){
 
 function copySummary(btn){
   const {v,r}=window._state;
+  const am=r.am;
+  const nappe=am.nappes===2?" par nappe":"";
+  /* La synthese copiee porte les MEMES marques que l'ecran. Une note qui
+     presenterait une valeur forcee comme calculee ne serait verifiable par
+     personne, et c'est ce texte-la qu'on colle dans un rapport. */
+  const marq=nom=>(am.sources[nom]==="impose"?" [IMPOSÉ]":"");
+  const avert=am.avertissements.length===0?""
+    :"\n--------------------------------------------\nAVERTISSEMENTS\n"+am.avertissements.map(a=>"  ! "+a).join("\n");
+
   const t=`ARMATURE MINIMALE DE FISSURATION — EN 1992-1-1
-Béton C${v.fck} · fct,eff=${fmt(r.fcteff,2)} MPa · fyk=${v.fyk} MPa
+Béton C${v.fck} · fct,eff=${fmt(am.fcteff,2)} MPa${marq("fcteff")} · fyk=${v.fyk} MPa
 Section h=${v.h} b=${v.b} c=${v.c} φ=${v.phi} · ${v.cas==="traction"?"traction pure":"flexion pure"}
+Méthode h_c,ef : ${am.methode==="ec2"?"texte EN 1992-1-1 §7.3.2(3)":"pratique allemande, branches h/d1"}
+Convention de k : ${am.conventionK==="de"?"annexe allemande (0,80→0,50)":"EC2 recommandé (1,00→0,65)"}
 --------------------------------------------
-As,min (éq.7.1)       = ${fmt0(r.Asmin)} mm²
-As,min (élément épais) = ${fmt0(r.AsminThick)} mm²
+d1        = ${fmt0(am.d1)} mm${marq("d1")}
+h_c,ef    = ${fmt0(am.hcef)} mm${marq("hcef")}
+k · k_c   = ${fmt(am.k,3)}${marq("k")} · ${fmt(am.kc,2)}${marq("kc")}
+A_ct      = ${fmt0(am.Act)} mm²${marq("Act")}
+A_c,ef    = ${fmt0(am.Aceff)} mm² (une face)${marq("Aceff")}
+σ_s       = ${fmt(am.sigs,1)} MPa${marq("sigs")}
+--------------------------------------------
+As,min approche mince  = ${fmt0(am.AsMinceTotal)} mm² total · ${fmt0(am.AsMinceParNappe)} mm²${nappe}
+As,min approche épaisse = ${fmt0(am.AsEpaisTotal)} mm² total · ${fmt0(am.AsEpaisParNappe)} mm²${nappe}
+  (borne anti-plastification ${fmt0(am.BorneTotal)} mm² total)
+As,min RETENU (${am.approcheRetenue}) = ${fmt0(am.AsMinTotal)} mm² total · ${fmt0(am.AsMinParNappe)} mm²${nappe}
 As,min (non-fragilité) = ${fmt0(r.Asnf)} mm²
-As,min GOUVERNANT     = ${fmt0(r.Asgov)} mm² (${r.govWho})
+As,min GOUVERNANT     = ${fmt0(r.Asgov)} mm² (${r.govWho})${avert}
 --------------------------------------------
 Vérification wk (As,prov=${v.asprov} mm²):
   sr,max = ${fmt0(r.srmax)} mm · εsm-εcm = ${fmt(r.eps,6)}
-  wk = ${fmt(r.wk,3)} mm  /  wk,max = ${fmt(v.wk,2)} mm  →  ${r.ok?"VÉRIFIÉ":"NON VÉRIFIÉ"}`;
+  wk = ${fmt(r.wk,3)} mm  /  wk,max = ${fmt(v.wk,2)} mm  →  ${r.ok?"VÉRIFIÉ":"NON VÉRIFIÉ"}
+--------------------------------------------
+Réserve : les branches de h_c,ef ne sont pas le texte de l'EN 1992-1-1
+(§7.3.2(3) : min(2,5(h−d) ; (h−x)/3 ; h/2)) mais la pratique allemande.
+k est un paramètre national. En BE et au LU, la justification réglementaire
+reste l'EN 1992-1-1 et ses annexes NBN / ILNAS. Ø* est une entrée.`;
   navigator.clipboard.writeText(t).then(()=>flash(btn,"Synthèse copiée"),()=>flash(btn,"Copie impossible"));
 }
 function flash(btn,msg){const o=btn.textContent;btn.textContent=msg;setTimeout(()=>btn.textContent=o,1400);}
@@ -644,16 +775,21 @@ const FISS_HTML = `
           <div class="field"><label>Résistance fck</label><input id="fck" type="number" step="1"><div class="u">MPa</div></div>
           <div class="field"><label>Ciment (coeff. s)</label><select id="s"><option value="0.20">R · 0,20</option><option value="0.25">N · 0,25</option><option value="0.38">S · 0,38</option></select></div>
           <div class="field"><label>Âge fissuration t</label><input id="t" type="number" step="1" min="1"><div class="u">jours</div></div>
-          <div class="field"><label>fct,eff</label><select id="mode"><option value="impose">valeur imposée</option><option value="auto">fctm(t) auto</option></select></div>
+          <div class="field"><label>fct,eff</label><select id="mode"><option value="impose">valeur imposée</option><option value="auto">fctm(t) par β_cc</option><option value="kzt">k_zt · fctm (jeune âge)</option><option value="tardif">tardif · max(fctm ; 3,0)</option></select></div>
           <div class="field"><label>fct,eff imposé</label><input id="fcteff" type="number" step="0.1"><div class="u">MPa</div></div>
-          <div class="note">Au jeune âge, la fissuration thermique survient souvent avant 28 j. Valeur minimale conseillée ≈ 2,9 MPa si l'échéance est incertaine.</div>
+          <div class="field"><label>k_zt = fct,eff / fctm</label><input id="kzt" type="number" step="0.05" min="0.1" max="1"></div>
+          <div class="note">Au jeune âge, la fissuration thermique survient souvent avant 28 j. Valeur minimale conseillée ≈ 2,9 MPa si l'échéance est incertaine. Ordres de grandeur de <em>k_zt</em> : 0,65 à 3 j, 0,75 à 5 j, 0,85 à 7 j — un radier massif dépasse 7 j, donc <em>k_zt</em> tend vers 1,0.</div>
+          <div class="field"><label>Méthode h_c,ef</label><select id="methode"><option value="din">pratique allemande · branches h/d₁</option><option value="ec2">texte EN 1992-1-1 · 2,5·d₁</option></select></div>
+          <div class="field"><label>Convention de k</label><select id="convK"><option value="ec2">EC2 · 1,00 → 0,65</option><option value="de">annexe allemande · 0,80 → 0,50</option></select></div>
+          <div class="note">Deux choix <strong>indépendants</strong> : <em>k</em> est un paramètre d'annexe nationale, <em>h_c,ef</em> une famille de formules. « Branches allemandes, <em>k</em> de l'annexe belge » est un cas légitime. Les branches de <em>h_c,ef</em> ne sont <strong>pas le texte</strong> de l'EN 1992-1-1, dont le §7.3.2(3) écrit min(2,5(h−d) ; (h−x)/3 ; h/2) : en BE et au LU, la justification réglementaire reste l'EC2 et ses annexes NBN / ILNAS.</div>
         </div>
         <div class="grp">
           <div class="subh">Acier</div>
           <div class="field"><label>Limite fyk</label><input id="fyk" type="number" step="10"><div class="u">MPa</div></div>
-          <div class="field"><label>σs (calcul)</label><select id="sigsMode"><option value="fyk">= fyk (plafond)</option><option value="val">valeur imposée</option></select></div>
+          <div class="field"><label>σs (calcul)</label><select id="sigsMode"><option value="fyk">= fyk (plafond)</option><option value="val">valeur imposée</option><option value="phistar">dérivée de Ø* (§7.3.3)</option></select></div>
           <div class="field"><label>σs imposé</label><input id="sigsVal" type="number" step="10"><div class="u">MPa</div></div>
-          <div class="note">Pour viser une largeur de fissure, lire σs au tableau 7.2N selon φ et wk.</div>
+          <div class="field"><label>Ø* limite</label><input id="phistar" type="number" step="0.1" min="1"><div class="u">mm</div></div>
+          <div class="note">Pour viser une largeur de fissure, lire σs au tableau 7.2N selon φ et wk — ou le dériver de Ø* par σs = √(6·w_k·E_s·f_ct,eff / Ø*). <strong>Ø* est une entrée</strong> : la définition de h_cr en traction pure reste à confirmer, et la recalculer figerait une hypothèse non vérifiée.</div>
         </div>
         <div class="grp">
           <div class="subh">Géométrie</div>
@@ -681,6 +817,19 @@ const FISS_HTML = `
           <div class="field"><label>k4</label><input id="k4" type="number" step="0.005"><div class="u">–</div></div>
           <div class="note">Valeurs recommandées EN 1992-1-1. Vérifiez l'Annexe Nationale (NBN / ILNAS). kt = 0,4 longue durée, 0,6 courte durée. k2 = 1,0 traction, 0,5 flexion.</div>
         </details>
+        <details class="adv">
+          <summary>Forcer des valeurs intermédiaires</summary>
+          <div class="note">Un champ <strong>vide</strong> veut dire « calculé ». Une valeur saisie <strong>court-circuite sa formule</strong> et alimente la suite de la chaîne : imposer <em>d₁</em> change <em>h_c,ef</em>, imposer <em>f_ct,eff</em> change <em>σ_s</em>. Toute valeur imposée est <strong>marquée</strong> dans les résultats et la synthèse — une note qui présenterait une valeur forcée comme calculée ne serait vérifiable par personne. Une valeur hors du domaine physique produit un <strong>avertissement</strong>, jamais un écrêtage silencieux.</div>
+          <div class="field"><label>f_ctm</label><input id="impFctm" type="number" step="0.01"><div class="u">MPa</div></div>
+          <div class="field"><label>f_ct,eff</label><input id="impFcteff" type="number" step="0.01"><div class="u">MPa</div></div>
+          <div class="field"><label>d₁</label><input id="impD1" type="number" step="1"><div class="u">mm</div></div>
+          <div class="field"><label>h_c,ef</label><input id="impHcef" type="number" step="1"><div class="u">mm</div></div>
+          <div class="field"><label>k</label><input id="impK" type="number" step="0.01"><div class="u">–</div></div>
+          <div class="field"><label>k_c</label><input id="impKc" type="number" step="0.05"><div class="u">–</div></div>
+          <div class="field"><label>A_ct</label><input id="impAct" type="number" step="1000"><div class="u">mm²</div></div>
+          <div class="field"><label>A_c,ef une face</label><input id="impAceff" type="number" step="1000"><div class="u">mm²</div></div>
+          <div class="field"><label>σ_s</label><input id="impSigs" type="number" step="1"><div class="u">MPa</div></div>
+        </details>
       </div>
     </div>
 
@@ -695,11 +844,33 @@ const FISS_HTML = `
         </div>
       </div>
 
+      <div id="avertissements" class="avert"></div>
+
       <div class="cards">
-        <div class="card"><div class="k">A_s,min — éq. 7.1 (section entière)</div><div class="val"><span id="asmin">—</span> <small>mm²</small></div><div class="x" id="asminface">—</div></div>
-        <div class="card"><div class="k">A_s,min — élément épais</div><div class="val"><span id="asminthick">—</span> <small>mm²</small></div><div class="x">zone de surface · « dicke Bauteile »</div></div>
+        <div class="card"><div class="k">A_s,min — approche mince (section entière)</div><div class="val"><span id="asmin">—</span> <small>mm²</small></div><div class="x" id="asminface">—</div></div>
+        <div class="card"><div class="k">A_s,min — approche épaisse (zone efficace)</div><div class="val"><span id="asminthick">—</span> <small>mm²</small></div><div class="x" id="asminborne">—</div></div>
         <div class="card"><div class="k">Non-fragilité — §9.2.1.1</div><div class="val"><span id="asnf">—</span> <small>mm²</small></div><div class="x">plancher de ductilité</div></div>
-        <div class="card gov"><div class="k">A_s,min gouvernant</div><div class="val"><span id="asgov">—</span> <small>mm²</small></div><div class="x" id="govwho">—</div></div>
+        <div class="card gov"><div class="k">A_s,min retenu</div><div class="val"><span id="asgov">—</span> <small>mm²</small></div><div class="x" id="govwho">—</div></div>
+      </div>
+
+      <!--
+        Le facteur 2 entre TOTAL et NAPPE est la cause classique d'un ecart
+        avec une feuille de calcul : les deux sont nommes, jamais confondus.
+        Et chaque grandeur dit si elle a ete CALCULEE ou IMPOSEE — sans quoi
+        une note presenterait une valeur forcee exactement comme une valeur
+        calculee, et ne serait verifiable par personne.
+      -->
+      <div class="verif ok">
+        <div class="verif-h"><span>Armature minimale de bridage — détail</span><span id="approche">—</span></div>
+        <div class="verif-b">
+          <div class="kv"><span class="lab">A_s,min retenu</span><span class="v" id="asretenu">—</span></div>
+          <div class="kv"><span class="lab">Méthode · convention de k</span><span class="v" id="referentiel">—</span></div>
+          <div class="kv"><span class="lab">d₁ · h_c,ef</span><span class="v"><span id="d1out">—</span> · <span id="hcefout">—</span></span></div>
+          <div class="kv"><span class="lab">f_ctm · f_ct,eff</span><span class="v"><span id="fctmout">—</span> · <span id="fcteffout">—</span></span></div>
+          <div class="kv"><span class="lab">k · k_c</span><span class="v"><span id="kout">—</span> · <span id="kcout">—</span></span></div>
+          <div class="kv"><span class="lab">A_ct · A_c,ef (une face)</span><span class="v"><span id="actout">—</span> · <span id="aceffout">—</span></span></div>
+          <div class="kv"><span class="lab">σ_s</span><span class="v" id="sigsout">—</span></div>
+        </div>
       </div>
 
       <div id="verif" class="verif ok">
