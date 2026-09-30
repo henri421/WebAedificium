@@ -321,6 +321,7 @@ const OUTILS_EXTERNES = {
   sectionUls:   "https://henri421.github.io/section-uls/",
   stm:          "https://henri421.github.io/STM/",
   poinconnement:"https://henri421.github.io/poinconnement/",
+  assemblages:  "https://henri421.github.io/assemblages-ec3/",
 };
 
 const MENU = [
@@ -328,6 +329,7 @@ const MENU = [
   { group:"Sections",                 items:[{href:OUTILS_EXTERNES.sectionUls, label:"Verification de sections"}] },
   { group:"Modeles bielle-tirant",    items:[{href:OUTILS_EXTERNES.stm, label:"Bielle-tirant"}] },
   { group:"Dalles",                   items:[{href:OUTILS_EXTERNES.poinconnement, label:"Poinconnement"}] },
+  { group:"Acier · EC3",              items:[{href:OUTILS_EXTERNES.assemblages, label:"Assemblages soudes"}] },
   { group:"Fissuration & durabilité", items:[["fissuration","Armature minimale"]] },
   { group:"À venir",                  items:[["poteau","Flambement de poteau"]], soon:true },
 ];
@@ -417,6 +419,11 @@ function renderAccueil(view){
       <div class="cat">Dalles</div>
       <h3>Poinconnement</h3>
       <p>Dalles pleines au droit d'un poteau (&sect;6.4) : perimetres de controle par construction geometrique, coefficient d'excentrement, resistance avec et sans armatures, ecrasement au nu du poteau.</p>
+    </a>
+    <a class="tool-card" href="${OUTILS_EXTERNES.assemblages}" target="_blank" rel="noopener">
+      <div class="cat">Acier &middot; EC3</div>
+      <h3>Assemblages soudes</h3>
+      <p>Cordons d'angle et penetrations (EN 1993-1-8 &sect;4.5) : tete d'ancrage de tirant sur beton ou sur lierne, te, cruciforme, angle, recouvrement, profile sur platine. Arrachement lamellaire, dispositions constructives.</p>
     </a>
     <a class="tool-card" href="#fissuration">
       <div class="cat">Fissuration &amp; durabilite</div>
