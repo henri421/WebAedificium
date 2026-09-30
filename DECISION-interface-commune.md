@@ -51,3 +51,12 @@ qu'un module partagé aurait évité.
 
 Un quatrième outil qui aurait besoin d'une primitive absente de la liste, ou un
 écart de comportement constaté entre deux outils sur une primitive extraite.
+
+## Réalisation — 2026-10-01
+
+Dépôt [`henri421/aedificium-ui`](https://github.com/henri421/aedificium-ui),
+étiquette `v1.0.0`, 18 tests, CI. `assemblages-ec3`, `poinconnement` et
+`section-uls` en tirent leurs primitives ; leurs suites de tests (267, 181,
+725) passent inchangées. Effet de bord voulu : `section-uls` affiche désormais
+un tiret au lieu de « NaN » pour une valeur absente. `assemblages-ec3` vérifie
+par un test que le `:root` de sa feuille de style concorde avec `JETONS`.
