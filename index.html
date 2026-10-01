@@ -307,7 +307,7 @@ const $ = id => document.getElementById(id);
 const PAGES = {
   accueil:     { title:"Accueil",                          render:renderAccueil },
   fissuration: { title:"Armature minimale de fissuration", render:renderFissuration },
-  poteau:      { title:"Flambement de poteau",             render:c=>renderSoon(c,"Flambement de poteau","Instabilite","Methode de la rigidite nominale ou de la courbure nominale (EN 1992-1-1 §5.8) : elancement, effets du second ordre, moment amplifie.") },
+  poteau:      { title:"Flambement de poteau",             render:c=>renderSoon(c,"Flambement de poteau","Instabilité","Méthode de la rigidité nominale ou de la courbure nominale (EN 1992-1-1 §5.8) : élancement, effets du second ordre, moment amplifié.") },
 };
 
 /*
@@ -324,17 +324,19 @@ const OUTILS_EXTERNES = {
   assemblages:  "https://henri421.github.io/assemblages-ec3/",
   schema:       "https://henri421.github.io/schema-statique/",
   climat:       "https://henri421.github.io/charges-climatiques/",
+  ancrages:     "https://henri421.github.io/dispositions-constructives/",
 };
 
 const MENU = [
   { group:null,                       items:[["accueil","Accueil"]] },
-  { group:"Sections",                 items:[{href:OUTILS_EXTERNES.sectionUls, label:"Verification de sections"}] },
-  { group:"Modeles bielle-tirant",    items:[{href:OUTILS_EXTERNES.stm, label:"Bielle-tirant"}] },
-  { group:"Dalles",                   items:[{href:OUTILS_EXTERNES.poinconnement, label:"Poinconnement"}] },
-  { group:"Acier · EC3",              items:[{href:OUTILS_EXTERNES.assemblages, label:"Assemblages soudes"}] },
+  { group:"Sections",                 items:[{href:OUTILS_EXTERNES.sectionUls, label:"Vérification de sections"}] },
+  { group:"Dispositions constructives", items:[{href:OUTILS_EXTERNES.ancrages, label:"Ancrages et recouvrements"}] },
+  { group:"Modèles bielle-tirant",    items:[{href:OUTILS_EXTERNES.stm, label:"Bielle-tirant"}] },
+  { group:"Dalles",                   items:[{href:OUTILS_EXTERNES.poinconnement, label:"Poinçonnement"}] },
+  { group:"Acier · EC3",              items:[{href:OUTILS_EXTERNES.assemblages, label:"Assemblages soudés"}] },
   { group:"Actions · EC1",            items:[{href:OUTILS_EXTERNES.climat, label:"Neige et vent"}] },
   { group:"Fissuration & durabilité", items:[["fissuration","Armature minimale"]] },
-  { group:"Schemas de calcul",        items:[{href:OUTILS_EXTERNES.schema, label:"Schema statique"}] },
+  { group:"Schémas de calcul",        items:[{href:OUTILS_EXTERNES.schema, label:"Schéma statique"}] },
   { group:"À venir",                  items:[["poteau","Flambement de poteau"]], soon:true },
 ];
 
@@ -405,49 +407,54 @@ function renderAccueil(view){
 
   <div class="hero">
     <p class="lead">Cette suite rassemble des outils de calcul de structures selon les <b>Eurocodes</b> : béton armé, acier, actions, et schémas pour les notes de calcul. Chaque outil expose la chaîne de calcul complète, avec les valeurs substituées, de sorte que la formule reste lisible derrière le résultat.</p>
-    <p class="lead">Les outils sont <b>indépendants</b> : chacun a son dépôt, sa page et son rythme. Cette page les relie plutôt qu'elle ne les absorbe — ce qui laisse à chacun la pile technique qui lui convient. Les cartes marquées « outil séparé » ouvrent un nouvel onglet.</p>
+    <p class="lead">Les outils sont <b>indépendants</b> : chacun a sa page et son rythme, et presque tous leur propre dépôt. Cette page les relie plutôt qu'elle ne les absorbe — ce qui laisse à chacun la pile technique qui lui convient. Les cartes marquées « outil séparé » ouvrent un nouvel onglet.</p>
   </div>
 
   <div class="toolgrid">
-    <a class="tool-card" href="${OUTILS_EXTERNES.sectionUls}" target="_blank" rel="noopener">
+    <a class="tool-card" href="${OUTILS_EXTERNES.sectionUls}" target="_blank" rel="noopener"><span class="status">outil séparé</span>
       <div class="cat">Sections</div>
-      <h3>Verification de sections</h3>
-      <p>Flexion composee droite et deviee a l'ELU, domaines d'interaction, verifications de service (contraintes, ouverture de fissures, courbure), effort tranchant &sect;6.2, dispositions constructives &sect;9.</p>
+      <h3>Vérification de sections</h3>
+      <p>Flexion composée droite et déviée à l'ELU, domaines d'interaction, vérifications de service (contraintes, ouverture de fissures, courbure), effort tranchant &sect;6.2, dispositions constructives &sect;9.</p>
     </a>
-    <a class="tool-card" href="${OUTILS_EXTERNES.stm}" target="_blank" rel="noopener">
-      <div class="cat">Modeles bielle-tirant</div>
+    <a class="tool-card" href="${OUTILS_EXTERNES.ancrages}" target="_blank" rel="noopener"><span class="status">outil séparé</span>
+      <div class="cat">Dispositions constructives</div>
+      <h3>Ancrages et recouvrements</h3>
+      <p>Longueurs d'ancrage et de recouvrement (EN 1992-1-1 &sect;8) : adhérence, coefficients &alpha;<sub>1</sub> à &alpha;<sub>6</sub> avec leur statut, borne 0,7, armatures de couture, paquets de barres, mandrins, cadres, synthèse par diamètre.</p>
+    </a>
+    <a class="tool-card" href="${OUTILS_EXTERNES.stm}" target="_blank" rel="noopener"><span class="status">outil séparé</span>
+      <div class="cat">Modèles bielle-tirant</div>
       <h3>Bielle-tirant</h3>
-      <p>Zones D en 2D et 3D (semelles sur pieux) : solveur par la methode des rigidites, verifications &sect;6.5, optimisation de Schlaich, choix des aciers HA, export DXF. Fonctionne hors ligne.</p>
+      <p>Zones D en 2D et 3D (semelles sur pieux) : solveur par la méthode des rigidités, vérifications &sect;6.5, optimisation de Schlaich, choix des aciers HA, export DXF. Fonctionne hors ligne.</p>
     </a>
-    <a class="tool-card" href="${OUTILS_EXTERNES.poinconnement}" target="_blank" rel="noopener">
+    <a class="tool-card" href="${OUTILS_EXTERNES.poinconnement}" target="_blank" rel="noopener"><span class="status">outil séparé</span>
       <div class="cat">Dalles</div>
-      <h3>Poinconnement</h3>
-      <p>Dalles pleines au droit d'un poteau (&sect;6.4) : perimetres de controle par construction geometrique, coefficient d'excentrement, resistance avec et sans armatures, ecrasement au nu du poteau.</p>
+      <h3>Poinçonnement</h3>
+      <p>Dalles pleines au droit d'un poteau (&sect;6.4) : périmètres de contrôle par construction géométrique, coefficient d'excentrement, résistance avec et sans armatures, écrasement au nu du poteau.</p>
     </a>
-    <a class="tool-card" href="${OUTILS_EXTERNES.assemblages}" target="_blank" rel="noopener">
+    <a class="tool-card" href="${OUTILS_EXTERNES.assemblages}" target="_blank" rel="noopener"><span class="status">outil séparé</span>
       <div class="cat">Acier &middot; EC3</div>
-      <h3>Assemblages soudes</h3>
-      <p>Cordons d'angle et penetrations (EN 1993-1-8 &sect;4.5) : tete d'ancrage de tirant sur beton ou sur lierne, te, cruciforme, angle, recouvrement, profile sur platine. Arrachement lamellaire, dispositions constructives.</p>
+      <h3>Assemblages soudés</h3>
+      <p>Cordons d'angle et pénétrations (EN 1993-1-8 &sect;4.5) : tête d'ancrage de tirant sur béton ou sur lierne, té, cruciforme, angle, recouvrement, profilé sur platine. Arrachement lamellaire, dispositions constructives.</p>
     </a>
-    <a class="tool-card" href="${OUTILS_EXTERNES.climat}" target="_blank" rel="noopener">
+    <a class="tool-card" href="${OUTILS_EXTERNES.climat}" target="_blank" rel="noopener"><span class="status">outil séparé</span>
       <div class="cat">Actions &middot; EC1</div>
       <h3>Neige et vent</h3>
-      <p>Charges de neige (EN 1991-1-3) et actions du vent (EN 1991-1-4) sur un batiment rectangulaire, zone par zone : pression de pointe, zonage des parois et toitures, c<sub>pe,1</sub> et c<sub>pe,10</sub>, cas de neige et accumulations. Profil normatif source, v<sub>b,0</sub> et s<sub>k</sub> saisis.</p>
+      <p>Charges de neige (EN 1991-1-3) et actions du vent (EN 1991-1-4) sur un bâtiment rectangulaire, zone par zone : pression de pointe, zonage des parois et des toitures, c<sub>pe,1</sub> et c<sub>pe,10</sub>, cas de neige et accumulations. Profil normatif sourcé, v<sub>b,0</sub> et s<sub>k</sub> saisis.</p>
     </a>
     <a class="tool-card" href="#fissuration">
-      <div class="cat">Fissuration &amp; durabilite</div>
+      <div class="cat">Fissuration &amp; durabilité</div>
       <h3>Armature minimale de fissuration</h3>
-      <p>Elements massifs sous deformation genee. Equation 7.1, reduction element epais, verification de l'ouverture de fissure.</p>
+      <p>Éléments massifs sous déformation gênée. Équation 7.1, réduction pour élément épais, vérification de l'ouverture de fissure.</p>
     </a>
-    <a class="tool-card" href="${OUTILS_EXTERNES.schema}" target="_blank" rel="noopener">
-      <div class="cat">Schemas de calcul</div>
-      <h3>Schema statique</h3>
-      <p>Schemas de poutres, portiques et consoles pour les notes de calcul : appuis, charges nommees, cotes, cas pratiques prets a l'emploi et bibliotheque de modeles. Export SVG et PNG. Dessine, ne calcule pas.</p>
+    <a class="tool-card" href="${OUTILS_EXTERNES.schema}" target="_blank" rel="noopener"><span class="status">outil séparé</span>
+      <div class="cat">Schémas de calcul</div>
+      <h3>Schéma statique</h3>
+      <p>Schémas de poutres, portiques et consoles pour les notes de calcul : appuis, charges nommées, cotes, cas pratiques prêts à l'emploi et bibliothèque de modèles. Export SVG et PNG. Dessine, ne calcule pas.</p>
     </a>
-    <span class="tool-card soon">
-      <div class="cat">Instabilite</div>
+    <span class="tool-card soon"><span class="status">à venir</span>
+      <div class="cat">Instabilité</div>
       <h3>Flambement de poteau</h3>
-      <p>Effets du second ordre, elancement, moment amplifie (&sect;5.8).</p>
+      <p>Effets du second ordre, élancement, moment amplifié (&sect;5.8).</p>
     </span>
   </div>`;
 }
@@ -559,7 +566,7 @@ function fissCompute(v){
   // La non-fragilite du §9.2.1.1 reste calculee ici : elle repond a une AUTRE
   // question — la resistance, pas la maitrise de la fissuration — et ne fait
   // pas partie de la chaine de bridage.
-  r.d = v.h - v.c;
+  r.d = v.h - am.d1;
   r.Asnf = Math.max(0.26 * r.fctm / v.fyk, 0.0013) * v.b * r.d;
   r.Asgov = Math.max(am.AsMinTotal, r.Asnf);
   r.govWho = am.AsMinTotal >= r.Asnf ? "équation 7.1 (retrait gêné)" : "non-fragilité";
@@ -675,7 +682,7 @@ function fissRender(){
   const vb=$("verif"),chip=$("verifChip"),vd=$("verdict"),vdt=$("verdictTxt");
   if(r.ok){vb.className="verif ok";chip.textContent="✓ VÉRIFIÉ";vd.className="verdict v-ok";vdt.textContent=`w_k = ${fmt(r.wk,3)} ≤ ${fmt(v.wk,2)} mm`;}
   else{vb.className="verif no";chip.textContent="✗ NON VÉRIFIÉ";vd.className="verdict v-no";vdt.textContent=`w_k = ${fmt(r.wk,3)} > ${fmt(v.wk,2)} mm`;}
-  if(r.sigsWk>v.fyk){chip.textContent="✗ σs > fyk — augmenter As,prov";vb.className="verif no";}
+  if(r.sigsWk>v.fyk){chip.textContent="✗ σs > fyk : l'acier plastifie à la fissuration";vb.className="verif no";}
   fissDraw(v,r);
   fissSteps(v,r);
   window._state={v,r};
@@ -710,12 +717,12 @@ function fissSteps(v,r){
   S.push(row("A_s,min retenu",`min(mince ; épais) — approche ${r.am.approcheRetenue}`,"<b>"+fmt0(r.am.AsMinTotal)+" mm² total · "+fmt0(r.am.AsMinParNappe)+" mm²"+(r.am.nappes===2?" par nappe":"")+"</b>"));
   S.push(row("ρ","A_s,min / (b·h)",fmt(r.rho*100,3)+" %"));
   S.push(hd("E · Non-fragilité (§9.2.1.1)"));
-  S.push(row("d","h − c",fmt0(r.d)+" mm"));
+  S.push(row("d","h − d₁",fmt0(r.d)+" mm"));
   S.push(row("A_s,min,nf","max(0,26·f_ctm/f_yk ; 0,0013)·b·d",fmt0(r.Asnf)+" mm²"));
   S.push(hd("F · Élément épais — zone effective"));
-  S.push(row("h_c,ef","min(2,5(h−d) ; h/2)",fmt0(r.hcef)+" mm"));
+  S.push(row("h_c,ef",(v.methode==="ec2"?"texte EC2 · min(2,5·d₁ ; h/2)":"pratique allemande, branches h/d₁")+marq("hcef"),fmt0(r.hcef)+" mm"));
   S.push(row("A_ct,eff",(r.nZone===2?"2·":"")+"b·h_c,ef",fmt0(r.ActEff)+" mm²"));
-  S.push(row("A_s,min,épais","k_c·k·f_ct,eff·A_ct,eff/σ_s","<b>"+fmt0(r.AsminThick)+" mm²</b>"));
+  S.push(row("A_s,min,épais",`max(${r.am.nappes} · f_ct,eff·A_c,ef/σ_s ; borne) — sans k ni k_c`,"<b>"+fmt0(r.AsminThick)+" mm²</b>"));
   S.push(hd("G · Ouverture de fissure (éq. 7.8 – 7.11)"));
   S.push(row("N_r","k_c·k·f_ct,eff·A_ct",fmt0(r.Nr)+" N"));
   S.push(row("σ_s (wk)","N_r / A_s,prov",fmt0(r.sigsWk)+" MPa"));
@@ -816,7 +823,7 @@ const FISS_HTML = `
           <div class="subh">Géométrie</div>
           <div class="field"><label>Hauteur h</label><input id="h" type="number" step="50"><div class="u">mm</div></div>
           <div class="field"><label>Largeur b</label><input id="b" type="number" step="50"><div class="u">mm</div></div>
-          <div class="field"><label>Enrobage à l'axe c</label><input id="c" type="number" step="5"><div class="u">mm</div></div>
+          <div class="field"><label>Enrobage nominal c</label><input id="c" type="number" step="5"><div class="u">mm</div></div>
           <div class="field"><label>Diamètre φ</label><input id="phi" type="number" step="2"><div class="u">mm</div></div>
         </div>
         <div class="grp">

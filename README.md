@@ -9,7 +9,8 @@ Point d'entrée d'une suite d'outils de calcul de structures selon les Eurocodes
 | Outil | Où | Ce qu'il fait |
 |---|---|---|
 | **Vérification de sections** | [dépôt séparé](https://github.com/henri421/section-uls) · [ouvrir](https://henri421.github.io/section-uls/) | Flexion composée droite et déviée à l'ELU, domaines d'interaction, vérifications de service (contraintes, ouverture de fissures, courbure), effort tranchant §6.2, dispositions constructives §9, fissuration des éléments massifs |
-| **Bielle-tirant** | [dépôt séparé](https://github.com/henri421/STM) · [ouvrir](https://henri421.github.io/STM/) | Efforts normaux dans un treillis plan : solveur paramétrique, optimisation de géométrie, génération de topologie. Fonctionne hors ligne |
+| **Bielle-tirant** | [dépôt séparé](https://github.com/henri421/MBT) · [ouvrir](https://henri421.github.io/MBT/) | Zones D en 2D et 3D (semelles sur pieux) : solveur par la méthode des rigidités, vérifications §6.5, optimisation de Schlaich, choix des aciers HA, export DXF. Fonctionne hors ligne. L'ancien dépôt `STM` est archivé |
+| **Ancrages et recouvrements** | [dépôt séparé](https://github.com/henri421/dispositions-constructives) · [ouvrir](https://henri421.github.io/dispositions-constructives/) | Longueurs d'ancrage et de recouvrement (EN 1992-1-1 §8) : adhérence avec plafond C60/75, coefficients α₁ à α₆ avec leur statut (calculé, fixé par la norme, non applicable), borne α₂α₃α₅ ≥ 0,7, armatures de couture, paquets de barres, mandrins, cadres, synthèse par diamètre |
 | **Poinçonnement** | [dépôt séparé](https://github.com/henri421/poinconnement) · [ouvrir](https://henri421.github.io/poinconnement/) | Dalles pleines au droit d'un poteau (§6.4) : périmètres de contrôle par construction géométrique, coefficient d'excentrement, résistance avec et sans armatures, écrasement au nu du poteau |
 | **Neige et vent** | [dépôt séparé](https://github.com/henri421/charges-climatiques) · [ouvrir](https://henri421.github.io/charges-climatiques/) | Charges de neige (EN 1991-1-3) et actions du vent (EN 1991-1-4) sur un bâtiment à base rectangulaire, rendues zone par zone et cas par cas : pression de pointe, bandes de hauteur de référence, zonage des parois et des toitures plates, c_pe,1 et c_pe,10, enveloppe de pression intérieure, trois cas des toitures à deux versants, accumulations. Profil normatif sourcé, aucune valeur nationale codée |
 | **Armature minimale de fissuration** | sur cette page | Éléments massifs sous déformation gênée : équation 7.1, réduction pour élément épais, vérification de l'ouverture réelle (éq. 7.8 à 7.11), coupe de section redessinée en direct |
@@ -65,6 +66,6 @@ Ils portent sur `asmin.js`, la chaîne d'armature minimale sous bridage centré,
 
 Cette adresse s'ouvre depuis n'importe quel navigateur, y compris une workstation d'entreprise, sans droits d'administration.
 
-## Base normative et réserves
+## Base normative de l'outil de fissuration, et réserves
 
 EN 1992-1-1:2004 + AC:2010, sections 7.3.2 et 7.3.4, tableau 3.1. Les valeurs recommandées (k3, k4, plancher de fct,eff) peuvent être modifiées par les Annexes Nationales belge (NBN) et luxembourgeoise (ILNAS) : vérifiez celle applicable au projet. La deuxième génération d'Eurocode (EN 1992-1-1:2023) révise la formulation de la maîtrise de la fissuration. Ces outils sont une aide au calcul ; la vérification finale relève de la responsabilité de l'ingénieur.
