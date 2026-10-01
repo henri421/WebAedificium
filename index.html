@@ -322,6 +322,7 @@ const OUTILS_EXTERNES = {
   stm:          "https://henri421.github.io/MBT/",
   poinconnement:"https://henri421.github.io/poinconnement/",
   assemblages:  "https://henri421.github.io/assemblages-ec3/",
+  schema:       "https://henri421.github.io/schema-statique/",
 };
 
 const MENU = [
@@ -331,6 +332,7 @@ const MENU = [
   { group:"Dalles",                   items:[{href:OUTILS_EXTERNES.poinconnement, label:"Poinconnement"}] },
   { group:"Acier · EC3",              items:[{href:OUTILS_EXTERNES.assemblages, label:"Assemblages soudes"}] },
   { group:"Fissuration & durabilité", items:[["fissuration","Armature minimale"]] },
+  { group:"Schemas de calcul",        items:[{href:OUTILS_EXTERNES.schema, label:"Schema statique"}] },
   { group:"À venir",                  items:[["poteau","Flambement de poteau"]], soon:true },
 ];
 
@@ -429,6 +431,11 @@ function renderAccueil(view){
       <div class="cat">Fissuration &amp; durabilite</div>
       <h3>Armature minimale de fissuration</h3>
       <p>Elements massifs sous deformation genee. Equation 7.1, reduction element epais, verification de l'ouverture de fissure.</p>
+    </a>
+    <a class="tool-card" href="${OUTILS_EXTERNES.schema}" target="_blank" rel="noopener">
+      <div class="cat">Schemas de calcul</div>
+      <h3>Schema statique</h3>
+      <p>Schemas de poutres, portiques et consoles pour les notes de calcul : appuis, charges nommees, cotes, cas pratiques prets a l'emploi et bibliotheque de modeles. Export SVG et PNG. Dessine, ne calcule pas.</p>
     </a>
     <span class="tool-card soon">
       <div class="cat">Instabilite</div>

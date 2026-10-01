@@ -12,6 +12,7 @@ Point d'entrée d'une suite d'outils de calcul de béton armé selon l'Eurocode 
 | **Bielle-tirant** | [dépôt séparé](https://github.com/henri421/STM) · [ouvrir](https://henri421.github.io/STM/) | Efforts normaux dans un treillis plan : solveur paramétrique, optimisation de géométrie, génération de topologie. Fonctionne hors ligne |
 | **Poinçonnement** | [dépôt séparé](https://github.com/henri421/poinconnement) · [ouvrir](https://henri421.github.io/poinconnement/) | Dalles pleines au droit d'un poteau (§6.4) : périmètres de contrôle par construction géométrique, coefficient d'excentrement, résistance avec et sans armatures, écrasement au nu du poteau |
 | **Armature minimale de fissuration** | sur cette page | Éléments massifs sous déformation gênée : équation 7.1, réduction pour élément épais, vérification de l'ouverture réelle (éq. 7.8 à 7.11), coupe de section redessinée en direct |
+| **Schéma statique** | [dépôt séparé](https://github.com/henri421/schema-statique) · [ouvrir](https://henri421.github.io/schema-statique/) | Schémas de poutres, portiques et consoles pour les notes de calcul : appuis, charges nommées, cotes, cas pratiques prêts à l'emploi, bibliothèque de modèles, export SVG et PNG. Dessine, ne calcule rien |
 | Flambement de poteau | à venir | Effets du second ordre, élancement, moment amplifié (§5.8) |
 
 La flexion simple et l'effort tranchant, autrefois réservés dans le menu de cette page, sont désormais couverts par l'outil de vérification de sections. Ils en ont été retirés plutôt que dupliqués.
