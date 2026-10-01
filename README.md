@@ -1,6 +1,6 @@
-# Aedificium web — Outils de vérification béton armé (EC2)
+# Aedificium web — Outils de calcul de structures (Eurocodes)
 
-Point d'entrée d'une suite d'outils de calcul de béton armé selon l'Eurocode 2 (EN 1992-1-1), destinée à un usage en bureau d'études. Tous les calculs s'exécutent localement dans le navigateur et aucune donnée n'est transmise.
+Point d'entrée d'une suite d'outils de calcul de structures selon les Eurocodes — béton armé, acier, actions, schémas de calcul — destinée à un usage en bureau d'études. Tous les calculs s'exécutent localement dans le navigateur et aucune donnée n'est transmise.
 
 **Cette page relie les outils, elle ne les absorbe pas.** Chaque outil vit dans son propre dépôt, avec sa propre pile technique, sa propre suite de tests et son propre rythme de publication. C'est un choix : absorber ici un outil qui a des dépendances et des tests lui coûterait les deux.
 

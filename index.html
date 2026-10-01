@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Béton armé · EC2 — Outils de vérification</title>
+<title>Aedificium · Outils de calcul de structures</title>
 <style>
   :root{
     /* ---- Chassis ---- */
@@ -268,13 +268,13 @@
 
   <aside class="nav" id="nav">
     <div class="brand">
-      <div class="eyebrow">EC2 · Béton armé</div>
-      <div class="name">Outils de vérification</div>
-      <div class="desc">Bureau d'études · Eurocode 2</div>
+      <div class="eyebrow">Aedificium · Structures</div>
+      <div class="name">Outils de calcul</div>
+      <div class="desc">Bureau d'études · Eurocodes</div>
     </div>
     <nav class="menu" id="menu"></nav>
     <div class="nav-foot">
-      Calculs exécutés localement, sans transmission de données. EN 1992-1-1:2004 + AC:2010.
+      Calculs exécutés localement, sans transmission de données. Eurocodes, 1<sup>re</sup> génération, valeurs recommandées.
     </div>
   </aside>
 
@@ -282,7 +282,7 @@
     <div class="topbar">
       <button class="hamb" id="hamb" aria-label="Menu" aria-controls="nav" aria-expanded="false"
               onclick="toggleNav(!document.body.classList.contains('nav-open'))"><span></span><span></span><span></span></button>
-      <div><div class="t-eyebrow">EC2 · Béton armé</div><div class="t-name">Outils de vérification</div></div>
+      <div><div class="t-eyebrow">Aedificium · Structures</div><div class="t-name">Outils de calcul</div></div>
     </div>
     <div class="view-wrap"><div id="view"></div></div>
   </main>
@@ -379,7 +379,7 @@ document.addEventListener("keydown", e=>{ if(e.key==="Escape") toggleNav(false);
 function router(){
   const route = (location.hash.replace("#","")||"accueil");
   const page = PAGES[route] || PAGES.accueil;
-  document.title = page.title + " · Béton armé EC2";
+  document.title = page.title + " · Aedificium";
   const view=$("view"); view.innerHTML="";
   page.render(view);
   setActive(PAGES[route]?route:"accueil");
@@ -395,14 +395,14 @@ function renderAccueil(view){
   view.innerHTML = `
   <div class="page-h">
     <div>
-      <div class="eyebrow">Suite d'outils · Eurocode 2</div>
-      <h1>Vérifications de béton armé</h1>
+      <div class="eyebrow">Suite d'outils · Eurocodes</div>
+      <h1>Calcul de structures</h1>
       <div class="sub">Outils de calcul pour bureau d'études, exécutés localement dans le navigateur</div>
     </div>
   </div>
 
   <div class="hero">
-    <p class="lead">Cette suite rassemble des outils de vérification selon l'<b>EN 1992-1-1</b>. Chaque outil expose la chaîne de calcul complète, avec les valeurs substituées, de sorte que la formule reste lisible derrière le résultat.</p>
+    <p class="lead">Cette suite rassemble des outils de calcul de structures selon les <b>Eurocodes</b> : béton armé, acier, actions, et schémas pour les notes de calcul. Chaque outil expose la chaîne de calcul complète, avec les valeurs substituées, de sorte que la formule reste lisible derrière le résultat.</p>
     <p class="lead">Les outils sont <b>indépendants</b> : chacun a son dépôt, sa page et son rythme. Cette page les relie plutôt qu'elle ne les absorbe — ce qui laisse à chacun la pile technique qui lui convient. Les cartes marquées « outil séparé » ouvrent un nouvel onglet.</p>
   </div>
 
