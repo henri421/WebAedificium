@@ -323,6 +323,7 @@ const OUTILS_EXTERNES = {
   poinconnement:"https://henri421.github.io/poinconnement/",
   assemblages:  "https://henri421.github.io/assemblages-ec3/",
   schema:       "https://henri421.github.io/schema-statique/",
+  climat:       "https://henri421.github.io/charges-climatiques/",
 };
 
 const MENU = [
@@ -331,6 +332,7 @@ const MENU = [
   { group:"Modeles bielle-tirant",    items:[{href:OUTILS_EXTERNES.stm, label:"Bielle-tirant"}] },
   { group:"Dalles",                   items:[{href:OUTILS_EXTERNES.poinconnement, label:"Poinconnement"}] },
   { group:"Acier · EC3",              items:[{href:OUTILS_EXTERNES.assemblages, label:"Assemblages soudes"}] },
+  { group:"Actions · EC1",            items:[{href:OUTILS_EXTERNES.climat, label:"Neige et vent"}] },
   { group:"Fissuration & durabilité", items:[["fissuration","Armature minimale"]] },
   { group:"Schemas de calcul",        items:[{href:OUTILS_EXTERNES.schema, label:"Schema statique"}] },
   { group:"À venir",                  items:[["poteau","Flambement de poteau"]], soon:true },
@@ -426,6 +428,11 @@ function renderAccueil(view){
       <div class="cat">Acier &middot; EC3</div>
       <h3>Assemblages soudes</h3>
       <p>Cordons d'angle et penetrations (EN 1993-1-8 &sect;4.5) : tete d'ancrage de tirant sur beton ou sur lierne, te, cruciforme, angle, recouvrement, profile sur platine. Arrachement lamellaire, dispositions constructives.</p>
+    </a>
+    <a class="tool-card" href="${OUTILS_EXTERNES.climat}" target="_blank" rel="noopener">
+      <div class="cat">Actions &middot; EC1</div>
+      <h3>Neige et vent</h3>
+      <p>Charges de neige (EN 1991-1-3) et actions du vent (EN 1991-1-4) sur un batiment rectangulaire, zone par zone : pression de pointe, zonage des parois et toitures, c<sub>pe,1</sub> et c<sub>pe,10</sub>, cas de neige et accumulations. Profil normatif source, v<sub>b,0</sub> et s<sub>k</sub> saisis.</p>
     </a>
     <a class="tool-card" href="#fissuration">
       <div class="cat">Fissuration &amp; durabilite</div>
