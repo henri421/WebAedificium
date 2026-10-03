@@ -307,7 +307,6 @@ const $ = id => document.getElementById(id);
 const PAGES = {
   accueil:     { title:"Accueil",                          render:renderAccueil },
   fissuration: { title:"Armature minimale de fissuration", render:renderFissuration },
-  poteau:      { title:"Flambement de poteau",             render:c=>renderSoon(c,"Flambement de poteau","Instabilité","Méthode de la rigidité nominale ou de la courbure nominale (EN 1992-1-1 §5.8) : élancement, effets du second ordre, moment amplifié.") },
 };
 
 /*
@@ -325,19 +324,21 @@ const OUTILS_EXTERNES = {
   schema:       "https://henri421.github.io/schema-statique/",
   climat:       "https://henri421.github.io/charges-climatiques/",
   ancrages:     "https://henri421.github.io/dispositions-constructives/",
+  colonne:      "https://henri421.github.io/colonne_ec2/",
+  sectionsEc3:  "https://henri421.github.io/sections-ec3/",
 };
 
 const MENU = [
   { group:null,                       items:[["accueil","Accueil"]] },
   { group:"Sections",                 items:[{href:OUTILS_EXTERNES.sectionUls, label:"Vérification de sections"}] },
   { group:"Dispositions constructives", items:[{href:OUTILS_EXTERNES.ancrages, label:"Ancrages et recouvrements"}] },
+  { group:"Poteaux",                  items:[{href:OUTILS_EXTERNES.colonne, label:"Colonne EC2"}] },
   { group:"Modèles bielle-tirant",    items:[{href:OUTILS_EXTERNES.stm, label:"Bielle-tirant"}] },
   { group:"Dalles",                   items:[{href:OUTILS_EXTERNES.poinconnement, label:"Poinçonnement"}] },
-  { group:"Acier · EC3",              items:[{href:OUTILS_EXTERNES.assemblages, label:"Assemblages soudés"}] },
+  { group:"Acier · EC3",              items:[{href:OUTILS_EXTERNES.sectionsEc3, label:"Sections acier"},{href:OUTILS_EXTERNES.assemblages, label:"Assemblages soudés"}] },
   { group:"Actions · EC1",            items:[{href:OUTILS_EXTERNES.climat, label:"Neige et vent"}] },
   { group:"Fissuration & durabilité", items:[["fissuration","Armature minimale"]] },
   { group:"Schémas de calcul",        items:[{href:OUTILS_EXTERNES.schema, label:"Schéma statique"}] },
-  { group:"À venir",                  items:[["poteau","Flambement de poteau"]], soon:true },
 ];
 
 function buildMenu(){
@@ -421,6 +422,11 @@ function renderAccueil(view){
       <h3>Ancrages et recouvrements</h3>
       <p>Longueurs d'ancrage et de recouvrement (EN 1992-1-1 &sect;8) : adhérence, coefficients &alpha;<sub>1</sub> à &alpha;<sub>6</sub> avec leur statut, borne 0,7, armatures de couture, paquets de barres, mandrins, cadres, synthèse par diamètre.</p>
     </a>
+    <a class="tool-card" href="${OUTILS_EXTERNES.colonne}" target="_blank" rel="noopener"><span class="status">outil séparé</span>
+      <div class="cat">Poteaux</div>
+      <h3>Colonne EC2</h3>
+      <p>Poteaux en béton armé : flambement et effets du second ordre (EN 1992-1-1 &sect;5.8, courbure nominale ou rigidité nominale), analyse P-&Delta; itérative, résistance de section N-M et flexion déviée.</p>
+    </a>
     <a class="tool-card" href="${OUTILS_EXTERNES.stm}" target="_blank" rel="noopener"><span class="status">outil séparé</span>
       <div class="cat">Modèles bielle-tirant</div>
       <h3>Bielle-tirant</h3>
@@ -430,6 +436,11 @@ function renderAccueil(view){
       <div class="cat">Dalles</div>
       <h3>Poinçonnement</h3>
       <p>Dalles pleines au droit d'un poteau (&sect;6.4) : périmètres de contrôle par construction géométrique, coefficient d'excentrement, résistance avec et sans armatures, écrasement au nu du poteau.</p>
+    </a>
+    <a class="tool-card" href="${OUTILS_EXTERNES.sectionsEc3}" target="_blank" rel="noopener"><span class="status">outil séparé</span>
+      <div class="cat">Acier &middot; EC3</div>
+      <h3>Sections acier</h3>
+      <p>Profils IPE, HEA, HEB, PRS et tubes (EN 1993-1-1) : propriétés recalculées, classification sous la sollicitation réelle, résistances, flambement, déversement (M<sub>cr</sub> hors norme signalé) et flexion composée.</p>
     </a>
     <a class="tool-card" href="${OUTILS_EXTERNES.assemblages}" target="_blank" rel="noopener"><span class="status">outil séparé</span>
       <div class="cat">Acier &middot; EC3</div>
@@ -451,11 +462,6 @@ function renderAccueil(view){
       <h3>Schéma statique</h3>
       <p>Schémas de poutres, portiques et consoles pour les notes de calcul : appuis, charges nommées, cotes, cas pratiques prêts à l'emploi et bibliothèque de modèles. Export SVG et PNG. Dessine, ne calcule pas.</p>
     </a>
-    <span class="tool-card soon"><span class="status">à venir</span>
-      <div class="cat">Instabilité</div>
-      <h3>Flambement de poteau</h3>
-      <p>Effets du second ordre, élancement, moment amplifié (&sect;5.8).</p>
-    </span>
   </div>`;
 }
 
