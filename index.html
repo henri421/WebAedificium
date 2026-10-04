@@ -326,6 +326,7 @@ const OUTILS_EXTERNES = {
   ancrages:     "https://henri421.github.io/dispositions-constructives/",
   colonne:      "https://henri421.github.io/colonne_ec2/",
   sectionsEc3:  "https://henri421.github.io/sections-ec3/",
+  ec2Gen2:      "https://henri421.github.io/blog/",
 };
 
 const MENU = [
@@ -339,6 +340,7 @@ const MENU = [
   { group:"Actions · EC1",            items:[{href:OUTILS_EXTERNES.climat, label:"Neige et vent"}] },
   { group:"Fissuration & durabilité", items:[["fissuration","Armature minimale"]] },
   { group:"Schémas de calcul",        items:[{href:OUTILS_EXTERNES.schema, label:"Schéma statique"}] },
+  { group:"Veille normative",         items:[{href:OUTILS_EXTERNES.ec2Gen2, label:"EC2 2e génération"}] },
 ];
 
 function buildMenu(){
@@ -461,6 +463,11 @@ function renderAccueil(view){
       <div class="cat">Schémas de calcul</div>
       <h3>Schéma statique</h3>
       <p>Schémas de poutres, portiques et consoles pour les notes de calcul : appuis, charges nommées, cotes, cas pratiques prêts à l'emploi et bibliothèque de modèles. Export SVG et PNG. Dessine, ne calcule pas.</p>
+    </a>
+    <a class="tool-card" href="${OUTILS_EXTERNES.ec2Gen2}" target="_blank" rel="noopener"><span class="status">outil séparé</span>
+      <div class="cat">Veille normative</div>
+      <h3>EC2 2e génération</h3>
+      <p>Ce qui change avec l'EN 1992-1-1:2023, mécanisme par mécanisme : effort tranchant, poinçonnement, fissuration, ancrages. Articles avec exemples chiffrés et calculateurs qui rendent côte à côte les deux générations et tous les niveaux d'approximation.</p>
     </a>
   </div>`;
 }
