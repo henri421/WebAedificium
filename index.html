@@ -322,6 +322,7 @@ const OUTILS_EXTERNES = {
   poinconnement:"https://henri421.github.io/poinconnement/",
   assemblages:  "https://henri421.github.io/assemblages-ec3/",
   schema:       "https://henri421.github.io/schema-statique/",
+  poutres:      "https://henri421.github.io/beam/",
   climat:       "https://henri421.github.io/charges-climatiques/",
   ancrages:     "https://henri421.github.io/dispositions-constructives/",
   colonne:      "https://henri421.github.io/colonne_ec2/",
@@ -339,7 +340,7 @@ const MENU = [
   { group:"Acier · EC3",              items:[{href:OUTILS_EXTERNES.sectionsEc3, label:"Sections acier"},{href:OUTILS_EXTERNES.assemblages, label:"Assemblages soudés"}] },
   { group:"Actions · EC1",            items:[{href:OUTILS_EXTERNES.climat, label:"Neige et vent"}] },
   { group:"Fissuration & durabilité", items:[["fissuration","Armature minimale"]] },
-  { group:"Schémas de calcul",        items:[{href:OUTILS_EXTERNES.schema, label:"Schéma statique"}] },
+  { group:"Schémas de calcul",        items:[{href:OUTILS_EXTERNES.schema, label:"Schéma statique"},{href:OUTILS_EXTERNES.poutres, label:"Poutres continues"}] },
   { group:"Veille normative",         items:[{href:OUTILS_EXTERNES.ec2Gen2, label:"EC2 2e génération"}] },
 ];
 
@@ -463,6 +464,11 @@ function renderAccueil(view){
       <div class="cat">Schémas de calcul</div>
       <h3>Schéma statique</h3>
       <p>Schémas de poutres, portiques et consoles pour les notes de calcul : appuis, charges nommées, cotes, cas pratiques prêts à l'emploi et bibliothèque de modèles. Export SVG et PNG. Dessine, ne calcule pas.</p>
+    </a>
+    <a class="tool-card" href="${OUTILS_EXTERNES.poutres}" target="_blank" rel="noopener"><span class="status">outil séparé</span>
+      <div class="cat">Schémas de calcul</div>
+      <h3>Poutres continues</h3>
+      <p>Poutres continues et hyperstatiques : appuis simples, encastrements, encastrements glissants et élastiques, ressorts, rotules et tassements ; charges ponctuelles, réparties, triangulaires et moments. Réactions, diagrammes M, V et déformée, valeurs exactes.</p>
     </a>
     <a class="tool-card" href="${OUTILS_EXTERNES.ec2Gen2}" target="_blank" rel="noopener"><span class="status">outil séparé</span>
       <div class="cat">Veille normative</div>
