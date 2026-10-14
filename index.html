@@ -328,6 +328,7 @@ const OUTILS_EXTERNES = {
   colonne:      "https://henri421.github.io/colonne_ec2/",
   sectionsEc3:  "https://henri421.github.io/sections-ec3/",
   ec2Gen2:      "https://henri421.github.io/blog/",
+  fondbis:      "https://henri421.github.io/Fondbis/",
 };
 
 const MENU = [
@@ -339,6 +340,7 @@ const MENU = [
   { group:"Dalles",                   items:[{href:OUTILS_EXTERNES.poinconnement, label:"Poinçonnement"}] },
   { group:"Acier · EC3",              items:[{href:OUTILS_EXTERNES.sectionsEc3, label:"Sections acier"},{href:OUTILS_EXTERNES.assemblages, label:"Assemblages soudés"}] },
   { group:"Actions · EC1",            items:[{href:OUTILS_EXTERNES.climat, label:"Neige et vent"}] },
+  { group:"Géotechnique · EC7",       items:[{href:OUTILS_EXTERNES.fondbis, label:"Fondations et soutènements"}] },
   { group:"Fissuration & durabilité", items:[["fissuration","Armature minimale"]] },
   { group:"Schémas de calcul",        items:[{href:OUTILS_EXTERNES.schema, label:"Schéma statique"},{href:OUTILS_EXTERNES.poutres, label:"Poutres continues"}] },
   { group:"Veille normative",         items:[{href:OUTILS_EXTERNES.ec2Gen2, label:"EC2 2e génération"}] },
@@ -454,6 +456,11 @@ function renderAccueil(view){
       <div class="cat">Actions &middot; EC1</div>
       <h3>Neige et vent</h3>
       <p>Charges de neige (EN 1991-1-3) et actions du vent (EN 1991-1-4) sur un bâtiment rectangulaire, zone par zone : pression de pointe, zonage des parois et des toitures, c<sub>pe,1</sub> et c<sub>pe,10</sub>, cas de neige et accumulations. Profil normatif sourcé, v<sub>b,0</sub> et s<sub>k</sub> saisis.</p>
+    </a>
+    <a class="tool-card" href="${OUTILS_EXTERNES.fondbis}" target="_blank" rel="noopener"><span class="status">outil séparé</span>
+      <div class="cat">Géotechnique &middot; EC7</div>
+      <h3>Fondations et soutènements</h3>
+      <p>Un modèle de terrain pour toutes les vérifications (EN 1997-1:2004) : semelles et radiers, pieux, mur en L, paroi phasée, terre armée, stabilité de talus chargé (Bishop, DA1/DA2/DA3). Coefficients du sol renforcé indicatifs, à confirmer selon la NF P 94-270.</p>
     </a>
     <a class="tool-card" href="#fissuration">
       <div class="cat">Fissuration &amp; durabilité</div>
