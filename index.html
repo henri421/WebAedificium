@@ -329,6 +329,7 @@ const OUTILS_EXTERNES = {
   sectionsEc3:  "https://henri421.github.io/sections-ec3/",
   ec2Gen2:      "https://henri421.github.io/blog/",
   fondbis:      "https://henri421.github.io/Fondbis/",
+  regard:       "https://henri421.github.io/regard/",
 };
 
 const MENU = [
@@ -341,6 +342,7 @@ const MENU = [
   { group:"Acier · EC3",              items:[{href:OUTILS_EXTERNES.sectionsEc3, label:"Sections acier"},{href:OUTILS_EXTERNES.assemblages, label:"Assemblages soudés"}] },
   { group:"Actions · EC1",            items:[{href:OUTILS_EXTERNES.climat, label:"Neige et vent"}] },
   { group:"Géotechnique · EC7",       items:[{href:OUTILS_EXTERNES.fondbis, label:"Fondations et soutènements"}] },
+  { group:"Maçonnerie · EC6",         items:[{href:OUTILS_EXTERNES.regard, label:"Regards en maçonnerie"}] },
   { group:"Fissuration & durabilité", items:[["fissuration","Armature minimale"]] },
   { group:"Schémas de calcul",        items:[{href:OUTILS_EXTERNES.schema, label:"Schéma statique"},{href:OUTILS_EXTERNES.poutres, label:"Poutres continues"}] },
   { group:"Veille normative",         items:[{href:OUTILS_EXTERNES.ec2Gen2, label:"EC2 2e génération"}] },
@@ -461,6 +463,11 @@ function renderAccueil(view){
       <div class="cat">Géotechnique &middot; EC7</div>
       <h3>Fondations et soutènements</h3>
       <p>Un modèle de terrain pour toutes les vérifications (EN 1997-1:2004) : semelles et radiers, pieux, mur en L, paroi phasée, terre armée, stabilité de talus chargé (Bishop, DA1/DA2/DA3). Coefficients du sol renforcé indicatifs, à confirmer selon la NF P 94-270.</p>
+    </a>
+    <a class="tool-card" href="${OUTILS_EXTERNES.regard}" target="_blank" rel="noopener"><span class="status">outil séparé</span>
+      <div class="cat">Maçonnerie &middot; EC6</div>
+      <h3>Regards en maçonnerie</h3>
+      <p>Murs de regards enterrés en maçonnerie non armée sous poussée des terres et trafic (SLW 60, LM1 ou charge saisie) : prédimensionnement EN 1996-3, bande verticale, méthode complète EN 1996-1-1 (compression, flexion, voûte horizontale, charge concentrée, cisaillement, soulèvement). Tables normatives pré-remplies, à vérifier.</p>
     </a>
     <a class="tool-card" href="#fissuration">
       <div class="cat">Fissuration &amp; durabilité</div>
