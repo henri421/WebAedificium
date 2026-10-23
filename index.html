@@ -330,17 +330,19 @@ const OUTILS_EXTERNES = {
   ec2Gen2:      "https://henri421.github.io/blog/",
   fondbis:      "https://henri421.github.io/Fondbis/",
   regard:       "https://henri421.github.io/regard/",
+  combinaisons: "https://henri421.github.io/combinaisons-actions/",
+  interface:    "https://henri421.github.io/cisaillement-interface/",
 };
 
 const MENU = [
   { group:null,                       items:[["accueil","Accueil"]] },
-  { group:"Sections",                 items:[{href:OUTILS_EXTERNES.sectionUls, label:"Vérification de sections"}] },
+  { group:"Sections",                 items:[{href:OUTILS_EXTERNES.sectionUls, label:"Vérification de sections"},{href:OUTILS_EXTERNES.interface, label:"Cisaillement à l'interface"}] },
   { group:"Dispositions constructives", items:[{href:OUTILS_EXTERNES.ancrages, label:"Ancrages et recouvrements"}] },
   { group:"Poteaux",                  items:[{href:OUTILS_EXTERNES.colonne, label:"Colonne EC2"}] },
   { group:"Modèles bielle-tirant",    items:[{href:OUTILS_EXTERNES.stm, label:"Bielle-tirant"}] },
   { group:"Dalles",                   items:[{href:OUTILS_EXTERNES.poinconnement, label:"Poinçonnement"}] },
-  { group:"Acier · EC3",              items:[{href:OUTILS_EXTERNES.sectionsEc3, label:"Sections acier"},{href:OUTILS_EXTERNES.assemblages, label:"Assemblages soudés"}] },
-  { group:"Actions · EC1",            items:[{href:OUTILS_EXTERNES.climat, label:"Neige et vent"}] },
+  { group:"Acier · EC3",              items:[{href:OUTILS_EXTERNES.sectionsEc3, label:"Sections acier"},{href:OUTILS_EXTERNES.assemblages, label:"Assemblages soudés et boulonnés"}] },
+  { group:"Actions · EC0 et EC1",     items:[{href:OUTILS_EXTERNES.combinaisons, label:"Combinaisons d'actions"},{href:OUTILS_EXTERNES.climat, label:"Neige et vent"}] },
   { group:"Géotechnique · EC7",       items:[{href:OUTILS_EXTERNES.fondbis, label:"Fondations et soutènements"}] },
   { group:"Maçonnerie · EC6",         items:[{href:OUTILS_EXTERNES.regard, label:"Regards en maçonnerie"}] },
   { group:"Fissuration & durabilité", items:[["fissuration","Armature minimale"]] },
@@ -424,6 +426,11 @@ function renderAccueil(view){
       <h3>Vérification de sections</h3>
       <p>Flexion composée droite et déviée à l'ELU, domaines d'interaction, vérifications de service (contraintes, ouverture de fissures, courbure), effort tranchant &sect;6.2, dispositions constructives &sect;9.</p>
     </a>
+    <a class="tool-card" href="${OUTILS_EXTERNES.interface}" target="_blank" rel="noopener"><span class="status">outil séparé</span>
+      <div class="cat">Sections</div>
+      <h3>Cisaillement à l'interface</h3>
+      <p>Reprises de bétonnage, dalle sur prédalle : v<sub>Edi</sub> et v<sub>Rdi</sub> selon l'EN 1992-1-1:2004 (&sect;6.2.5) ou 2023 (&sect;8.2.6, armatures ancrées ou non, effet de goujon). Un bouton bascule d'une génération à l'autre sans ressaisie.</p>
+    </a>
     <a class="tool-card" href="${OUTILS_EXTERNES.ancrages}" target="_blank" rel="noopener"><span class="status">outil séparé</span>
       <div class="cat">Dispositions constructives</div>
       <h3>Ancrages et recouvrements</h3>
@@ -447,12 +454,17 @@ function renderAccueil(view){
     <a class="tool-card" href="${OUTILS_EXTERNES.sectionsEc3}" target="_blank" rel="noopener"><span class="status">outil séparé</span>
       <div class="cat">Acier &middot; EC3</div>
       <h3>Sections acier</h3>
-      <p>Profils IPE, HEA, HEB, PRS et tubes (EN 1993-1-1) : propriétés recalculées, classification sous la sollicitation réelle, résistances, flambement, déversement (M<sub>cr</sub> hors norme signalé) et flexion composée.</p>
+      <p>Profils IPE, HEA, HEB, PRS et tubes (EN 1993-1-1) : propriétés recalculées, classification sous la sollicitation réelle, sections efficaces de classe 4, résistances, flambement, déversement (M<sub>cr</sub> hors norme signalé) et flexion composée.</p>
     </a>
     <a class="tool-card" href="${OUTILS_EXTERNES.assemblages}" target="_blank" rel="noopener"><span class="status">outil séparé</span>
       <div class="cat">Acier &middot; EC3</div>
-      <h3>Assemblages soudés</h3>
-      <p>Cordons d'angle et pénétrations (EN 1993-1-8 &sect;4.5) : tête d'ancrage de tirant sur béton ou sur lierne, té, cruciforme, angle, recouvrement, profilé sur platine. Arrachement lamellaire, dispositions constructives.</p>
+      <h3>Assemblages soudés et boulonnés</h3>
+      <p>Cordons d'angle et pénétrations (EN 1993-1-8 &sect;4.5) : tête d'ancrage de tirant sur béton ou sur lierne, té, cruciforme, angle, recouvrement, profilé sur platine. Éclissage boulonné (&sect;3.4 à &sect;3.10) : cisaillement, pression diamétrale, groupe, section nette, cisaillement de bloc. Arrachement lamellaire, dispositions constructives.</p>
+    </a>
+    <a class="tool-card" href="${OUTILS_EXTERNES.combinaisons}" target="_blank" rel="noopener"><span class="status">outil séparé</span>
+      <div class="cat">Actions &middot; EC0</div>
+      <h3>Combinaisons d'actions</h3>
+      <p>Combinaisons de l'EN 1990 pour les bâtiments : ELU EQU, STR/GEO (6.10 ou 6.10a/b), GEO, accidentelles, ELS caractéristiques, fréquentes et quasi permanentes ; groupes d'actions exclusives, valeurs combinées et enveloppes. Export CSV et Excel ; import des cas de neige et vent.</p>
     </a>
     <a class="tool-card" href="${OUTILS_EXTERNES.climat}" target="_blank" rel="noopener"><span class="status">outil séparé</span>
       <div class="cat">Actions &middot; EC1</div>
@@ -482,7 +494,7 @@ function renderAccueil(view){
     <a class="tool-card" href="${OUTILS_EXTERNES.poutres}" target="_blank" rel="noopener"><span class="status">outil séparé</span>
       <div class="cat">Schémas de calcul</div>
       <h3>Poutres continues</h3>
-      <p>Poutres continues et hyperstatiques : appuis, ressorts, rotules, tassements ; charges G et Q. Enveloppes ELU et ELS avec charges alternées, puis béton armé : aciers en travée et sur appui, effort tranchant, épure d'arrêt des barres et ancrages.</p>
+      <p>Poutres continues et hyperstatiques : appuis, ressorts, rotules, tassements ; charges G et Q. Enveloppes ELU et ELS avec charges alternées, puis béton armé (aciers, effort tranchant, épure d'arrêt, ancrages) ou acier (section, déversement, flèche, via sections-ec3).</p>
     </a>
     <a class="tool-card" href="${OUTILS_EXTERNES.ec2Gen2}" target="_blank" rel="noopener"><span class="status">outil séparé</span>
       <div class="cat">Veille normative</div>
