@@ -332,6 +332,7 @@ const OUTILS_EXTERNES = {
   regard:       "https://henri421.github.io/regard/",
   combinaisons: "https://henri421.github.io/combinaisons-actions/",
   interface:    "https://henri421.github.io/cisaillement-interface/",
+  equilibre:    "https://henri421.github.io/equilibre-statique/",
 };
 
 const MENU = [
@@ -343,7 +344,8 @@ const MENU = [
   { group:"Dalles",                   items:[{href:OUTILS_EXTERNES.poinconnement, label:"Poinçonnement"}] },
   { group:"Acier · EC3",              items:[{href:OUTILS_EXTERNES.sectionsEc3, label:"Sections acier"},{href:OUTILS_EXTERNES.assemblages, label:"Assemblages soudés et boulonnés"}] },
   { group:"Actions · EC0 et EC1",     items:[{href:OUTILS_EXTERNES.combinaisons, label:"Combinaisons d'actions"},{href:OUTILS_EXTERNES.climat, label:"Neige et vent"}] },
-  { group:"Géotechnique · EC7",       items:[{href:OUTILS_EXTERNES.fondbis, label:"Fondations et soutènements"}] },
+  { group:"Géotechnique · EC7",       items:[{href:OUTILS_EXTERNES.fondbis, label:"Fondations et soutènements"},{href:null, label:"Tirants de paroi"}] },
+  { group:"Équilibre et soutènement", items:[{href:OUTILS_EXTERNES.equilibre, label:"Équilibre statique"},{href:null, label:"Murs en L"}] },
   { group:"Maçonnerie · EC6",         items:[{href:OUTILS_EXTERNES.regard, label:"Regards en maçonnerie"}] },
   { group:"Fissuration & durabilité", items:[["fissuration","Armature minimale"]] },
   { group:"Schémas de calcul",        items:[{href:OUTILS_EXTERNES.schema, label:"Schéma statique"},{href:OUTILS_EXTERNES.poutres, label:"Poutres continues"}] },
@@ -358,7 +360,10 @@ function buildMenu(){
       // Adresse externe : lien sortant, ouvert dans un nouvel onglet, signale
       // comme tel. L'utilisateur doit savoir qu'il quitte cette page.
       if(!Array.isArray(item)){
-        h+=`<a class="item" href="${item.href}" target="_blank" rel="noopener">${item.label}</a>`;
+        // Sans adresse : outil prevu mais pas encore publie, affiche comme tel.
+        h+=item.href===null
+          ? `<span class="item disabled">${item.label} <small>(non publié)</small></span>`
+          : `<a class="item" href="${item.href}" target="_blank" rel="noopener">${item.label}</a>`;
         return;
       }
       const [route,label]=item;
@@ -476,6 +481,21 @@ function renderAccueil(view){
       <h3>Fondations et soutènements</h3>
       <p>Un modèle de terrain pour toutes les vérifications (EN 1997-1:2004) : semelles et radiers, pieux, mur en L, paroi phasée, terre armée, stabilité de talus chargé (Bishop, DA1/DA2/DA3). Coefficients du sol renforcé indicatifs, à confirmer selon la NF P 94-270.</p>
     </a>
+    <a class="tool-card" href="${OUTILS_EXTERNES.equilibre}" target="_blank" rel="noopener"><span class="status">outil séparé</span>
+      <div class="cat">Équilibre et soutènement</div>
+      <h3>Équilibre statique</h3>
+      <p>Équilibre d'un élément plan à l'ELU : segments pesants (L, U, cadres), charges ponctuelles, réparties, triangulaires, trapézoïdales et moments. Bras de levier et rôle de chaque charge, renversement (EQU) avec tableau charge / distance / &gamma;<sub>f</sub> / moments stabilisants et déstabilisants, glissement, soulèvement (UPL), position de la résultante.</p>
+    </a>
+    <div class="tool-card soon"><span class="status">non publié</span>
+      <div class="cat">Équilibre et soutènement</div>
+      <h3>Murs en L</h3>
+      <p>Murs de soutènement en L : poussée des terres, stabilité externe (renversement, glissement, portance) et ferraillage du voile et de la semelle, en appelant les moteurs de l'équilibre statique, des sections en béton armé et du sol. En préparation.</p>
+    </div>
+    <div class="tool-card soon"><span class="status">non publié</span>
+      <div class="cat">Géotechnique &middot; EC7</div>
+      <h3>Tirants de paroi</h3>
+      <p>Vérification des tirants d'ancrage d'une paroi de soutènement (EN 1997-1 &sect;8). En préparation.</p>
+    </div>
     <a class="tool-card" href="${OUTILS_EXTERNES.regard}" target="_blank" rel="noopener"><span class="status">outil séparé</span>
       <div class="cat">Maçonnerie &middot; EC6</div>
       <h3>Regards en maçonnerie</h3>
