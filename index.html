@@ -56,8 +56,7 @@
 
   /* Surtitres, libelles de panneau, pastilles et boutons : sans, majuscules
      espacees. */
-  .eyebrow,.t-eyebrow,.menu-group-lbl,.subh,.tag,.card .k,.tool-card .cat,
-  .tool-card .status,.placeholder .big,caption,.step.head,.verdict small,
+  .eyebrow,.t-eyebrow,.menu-group-lbl,.subh,.tag,.card .k,.tuile .status,.placeholder .big,caption,.step.head,.verdict small,
   button.tool,details.adv summary,details.deriv summary,.panel-h{
     font-family:var(--sans);font-size:.72rem;letter-spacing:.08em;
     text-transform:uppercase;font-weight:600}
@@ -140,19 +139,54 @@
   .v-ok{color:var(--ok);border-color:var(--ok);background:var(--ok-fond)}
   .v-no{color:var(--refus);border-color:var(--refus);background:var(--refus-fond)}
 
-  /* ---------- Accueil ---------- */
-  .hero{padding:8px 0 4px}
-  .hero .lead{font-size:.85rem;color:var(--texte);max-width:60ch}
-  .toolgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin:22px 0}
-  .tool-card{display:block;text-decoration:none;color:inherit;border:1px solid var(--bordure);border-radius:var(--rayon);background:var(--surface);padding:16px;position:relative;transition:border-color .15s}
-  a.tool-card:hover{border-color:var(--accent)}
-  .tool-card .cat{color:var(--texte-faible)}
-  .tool-card h3{font-size:.95rem;margin:6px 0 4px;font-weight:600}
-  .tool-card p{font-size:.85rem;color:var(--texte-doux);margin:0}
-  /* Pastille d'etat : information, pas verdict — donc pas de couleur de sens. */
-  .tool-card .status{position:absolute;top:14px;right:14px;padding:2px 6px;border-radius:var(--rayon-petit);
+  /* ---------- Accueil : tableau de bord par Eurocode ---------- */
+  .tb{display:grid;grid-template-columns:220px minmax(0,1fr);gap:22px;padding-top:22px}
+  .tb-nav{display:flex;flex-direction:column;align-self:start;position:sticky;top:72px;
+    background:var(--surface);border:1px solid var(--bordure);border-radius:var(--rayon);padding:6px}
+  .tb-nav a{display:flex;gap:8px;align-items:baseline;padding:7px 10px;border-radius:var(--rayon-petit);
+    color:var(--texte);text-decoration:none;font-size:.85rem}
+  .tb-nav a:hover{background:var(--fond)}
+  .tb-nav a.actif{background:var(--accent-doux);color:var(--accent);font-weight:600}
+  .tb-nav .num{font-family:var(--mono);font-size:.78rem;min-width:4.4rem}
+  .tb-nav i{margin-left:auto;font-style:normal;font-family:var(--mono);font-size:.78rem;color:var(--texte-faible)}
+  .tb-main .page-h{padding-top:0}
+  .tb-main .lead{font-size:.85rem;max-width:68ch;margin:0 0 8px}
+  .tb-groupe{margin:22px 0 0}
+  .tb-groupe h2{font-size:.95rem;font-weight:600;margin:0 0 10px;padding-bottom:4px;border-bottom:1px solid var(--bordure)}
+  .tb-groupe h2 a{color:inherit;text-decoration:none}
+  .tb-groupe h2 a:hover{color:var(--accent)}
+  .tb-groupe .num,.tb-main .num{font-family:var(--mono)}
+  .tuiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
+  .tuiles.detail{grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
+  .tuile{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:5px;
+    background:var(--surface);border:1px solid var(--bordure);border-radius:var(--rayon);padding:14px;
+    color:inherit;text-decoration:none;transition:border-color .15s}
+  a.tuile:hover{border-color:var(--accent)}
+  .tuile .ic{width:64px;height:64px;border-radius:12px;flex:none}
+  .ic-vide{display:inline-flex;align-items:center;justify-content:center;background:var(--surface-appui);
+    border:1px solid var(--bordure);color:var(--texte-faible);font-weight:600;font-size:1.5rem}
+  .tuile b{font-size:.92rem;line-height:1.3}
+  .tuile small{font-size:.8rem;color:var(--texte-doux);line-height:1.35}
+  .tuile .long{display:none;font-size:.82rem;color:var(--texte-doux);margin:4px 0 0}
+  .tuiles.detail .long{display:block}
+  .tuile .ext{position:absolute;top:10px;right:12px;color:var(--texte-faible);font-size:.9rem}
+  /* Pastille d'etat : information, pas verdict, donc pas de couleur de sens. */
+  .tuile .status{position:absolute;top:12px;right:12px;padding:2px 6px;border-radius:var(--rayon-petit);
     background:var(--surface-appui);color:var(--texte-faible);border:1px solid var(--bordure-douce)}
-  .tool-card.soon{opacity:.85}
+  .tuile.attente{opacity:.6}
+  .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  .menu-group a.menu-group-lbl{color:var(--texte-faible);text-decoration:none}
+  .menu-group a.menu-group-lbl:hover,.menu-group a.menu-group-lbl.active{color:var(--accent)}
+  @media(max-width:760px){
+    .tb{grid-template-columns:1fr;gap:14px;padding-top:14px}
+    .tb-nav{position:static;flex-direction:row;overflow-x:auto;padding:4px}
+    .tb-nav a{white-space:nowrap;flex:none}
+    .tb-nav .num{min-width:0}
+    .tuiles{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+    .tuiles.detail{grid-template-columns:1fr}
+    .tuile{padding:12px}
+    .tuile .ic{width:52px;height:52px;border-radius:10px}
+  }
 
   /* ---------- shared building blocks (fissuration) ---------- */
   .grid{display:grid;grid-template-columns:340px 1fr;gap:22px;margin:0 0 22px}
@@ -245,7 +279,7 @@
     input,select{border:0;background:none;padding:0}
   }
   @media(prefers-reduced-motion:no-preference){
-    .card .val,.verif,.verdict,.tool-card{transition:.18s}
+    .card .val,.verif,.verdict,.tuile{transition:.18s}
   }
   @media(prefers-reduced-motion:reduce){
     aside.nav{transition:none}
@@ -302,10 +336,11 @@ const $ = id => document.getElementById(id);
 /* =========================================================
    REGISTRE DES PAGES ET DU MENU
    Pour ajouter un outil : ecrire une fonction render(container),
-   l'enregistrer dans PAGES, et ajouter une entree dans MENU.
+   l'enregistrer dans PAGES ; pour un outil separe, ajouter son adresse dans
+   OUTILS_EXTERNES et une entree dans GROUPES.
    ========================================================= */
 const PAGES = {
-  accueil:     { title:"Accueil",                          render:renderAccueil },
+  accueil:     { title:"Accueil",                          render:v=>renderTableau(v,null) },
   fissuration: { title:"Armature minimale de fissuration", render:renderFissuration },
 };
 
@@ -335,49 +370,71 @@ const OUTILS_EXTERNES = {
   equilibre:    "https://henri421.github.io/equilibre-statique/",
 };
 
-const MENU = [
-  { group:null,                       items:[["accueil","Accueil"]] },
-  { group:"Sections",                 items:[{href:OUTILS_EXTERNES.sectionUls, label:"Vérification de sections"},{href:OUTILS_EXTERNES.interface, label:"Cisaillement à l'interface"}] },
-  { group:"Dispositions constructives", items:[{href:OUTILS_EXTERNES.ancrages, label:"Ancrages et recouvrements"}] },
-  { group:"Poteaux",                  items:[{href:OUTILS_EXTERNES.colonne, label:"Colonne EC2"}] },
-  { group:"Modèles bielle-tirant",    items:[{href:OUTILS_EXTERNES.stm, label:"Bielle-tirant"}] },
-  { group:"Dalles",                   items:[{href:OUTILS_EXTERNES.poinconnement, label:"Poinçonnement"}] },
-  { group:"Acier · EC3",              items:[{href:OUTILS_EXTERNES.sectionsEc3, label:"Sections acier"},{href:OUTILS_EXTERNES.assemblages, label:"Assemblages soudés et boulonnés"}] },
-  { group:"Actions · EC0 et EC1",     items:[{href:OUTILS_EXTERNES.combinaisons, label:"Combinaisons d'actions"},{href:OUTILS_EXTERNES.climat, label:"Neige et vent"}] },
-  { group:"Géotechnique · EC7",       items:[{href:OUTILS_EXTERNES.fondbis, label:"Fondations et soutènements"},{href:null, label:"Tirants de paroi"}] },
-  { group:"Équilibre et soutènement", items:[{href:OUTILS_EXTERNES.equilibre, label:"Équilibre statique"},{href:null, label:"Murs en L"}] },
-  { group:"Maçonnerie · EC6",         items:[{href:OUTILS_EXTERNES.regard, label:"Regards en maçonnerie"}] },
-  { group:"Fissuration & durabilité", items:[["fissuration","Armature minimale"]] },
-  { group:"Schémas de calcul",        items:[{href:OUTILS_EXTERNES.schema, label:"Schéma statique"},{href:OUTILS_EXTERNES.poutres, label:"Poutres continues"}] },
-  { group:"Veille normative",         items:[{href:OUTILS_EXTERNES.ec2Gen2, label:"EC2 2e génération"}] },
+/*
+ * Les outils sont ranges PAR EUROCODE : c'est l'adresse qu'un ingenieur a deja
+ * en tete (« le poinconnement, c'est l'EN 1992 »). Chaque groupe est aussi une
+ * page du tableau de bord (#en1992…), l'accueil les montre tous.
+ * Un outil porte soit `href` (outil separe, nouvel onglet ; null = pas encore
+ * publie), soit `route` (page interne a ce hub).
+ */
+const GROUPES = [
+  { id:"en1990", num:"EN 1990", titre:"Bases de calcul", note:"Combinaisons d'actions et équilibre statique.", outils:[
+      {"nom": "Combinaisons d'actions", "court": "ELU, ELS, coefficients ψ et γ", "href": OUTILS_EXTERNES.combinaisons, "icone": "icones/combinaisons.svg", "long": "Combinaisons de l'EN 1990 pour les bâtiments : ELU EQU, STR/GEO (6.10 ou 6.10a/b), GEO, accidentelles, ELS caractéristiques, fréquentes et quasi permanentes ; groupes d'actions exclusives, valeurs combinées et enveloppes. Export CSV et Excel ; import des cas de neige et vent."},
+      {"nom": "Équilibre statique", "court": "Renversement, glissement, soulèvement", "href": OUTILS_EXTERNES.equilibre, "icone": "icones/equilibre.svg", "long": "Équilibre d'un élément plan à l'ELU : segments pesants (L, U, cadres), charges ponctuelles, réparties, triangulaires, trapézoïdales et moments. Bras de levier et rôle de chaque charge, renversement (EQU) avec tableau charge / distance / &gamma;<sub>f</sub> / moments stabilisants et déstabilisants, glissement, soulèvement (UPL), position de la résultante."}
+  ]},
+  { id:"en1991", num:"EN 1991", titre:"Actions", note:"Actions climatiques sur les bâtiments.", outils:[
+      {"nom": "Neige et vent", "court": "Charges climatiques, EN 1991-1-3 et 1-4", "href": OUTILS_EXTERNES.climat, "icone": "icones/climat.svg", "long": "Charges de neige (EN 1991-1-3) et actions du vent (EN 1991-1-4) sur un bâtiment rectangulaire, zone par zone : pression de pointe, zonage des parois et des toitures, c<sub>pe,1</sub> et c<sub>pe,10</sub>, cas de neige et accumulations. Profil normatif sourcé, v<sub>b,0</sub> et s<sub>k</sub> saisis."}
+  ]},
+  { id:"en1992", num:"EN 1992", titre:"Béton", note:"Calcul des structures en béton. Génération 2004, bascule vers 2023 là où elle existe.", outils:[
+      {"nom": "Vérification de sections", "court": "Flexion déviée, service, tranchant", "href": OUTILS_EXTERNES.sectionUls, "icone": "icones/sectionUls.svg", "long": "Flexion composée droite et déviée à l'ELU, domaines d'interaction, vérifications de service (contraintes, ouverture de fissures, courbure), effort tranchant &sect;6.2, dispositions constructives &sect;9."},
+      {"nom": "Poutres continues", "court": "Enveloppes, ferraillage, flèche", "href": OUTILS_EXTERNES.poutres, "icone": "icones/poutres.svg", "long": "Poutres continues et hyperstatiques : appuis, ressorts, rotules, tassements ; charges G et Q. Enveloppes ELU et ELS avec charges alternées, puis béton armé (aciers, effort tranchant, épure d'arrêt, ancrages) ou acier (section, déversement, flèche, via sections-ec3)."},
+      {"nom": "Colonne EC2", "court": "Flambement et second ordre §5.8", "href": OUTILS_EXTERNES.colonne, "icone": "icones/colonne.svg", "long": "Poteaux en béton armé : flambement et effets du second ordre (EN 1992-1-1 &sect;5.8, courbure nominale ou rigidité nominale), analyse P-&Delta; itérative, résistance de section N-M et flexion déviée."},
+      {"nom": "Poinçonnement", "court": "Dalles sur poteaux §6.4", "href": OUTILS_EXTERNES.poinconnement, "icone": "icones/poinconnement.svg", "long": "Dalles pleines au droit d'un poteau (&sect;6.4) : périmètres de contrôle par construction géométrique, coefficient d'excentrement, résistance avec et sans armatures, écrasement au nu du poteau."},
+      {"nom": "Cisaillement à l'interface", "court": "Reprises de bétonnage", "href": OUTILS_EXTERNES.interface, "icone": "icones/interface.svg", "long": "Reprises de bétonnage, dalle sur prédalle : v<sub>Edi</sub> et v<sub>Rdi</sub> selon l'EN 1992-1-1:2004 (&sect;6.2.5) ou 2023 (&sect;8.2.6, armatures ancrées ou non, effet de goujon). Un bouton bascule d'une génération à l'autre sans ressaisie."},
+      {"nom": "Ancrages et recouvrements", "court": "Dispositions constructives §8", "href": OUTILS_EXTERNES.ancrages, "icone": "icones/ancrages.svg", "long": "Longueurs d'ancrage et de recouvrement (EN 1992-1-1 &sect;8) : adhérence, coefficients &alpha;<sub>1</sub> à &alpha;<sub>6</sub> avec leur statut, borne 0,7, armatures de couture, paquets de barres, mandrins, cadres, synthèse par diamètre."},
+      {"nom": "Bielle-tirant", "court": "Zones D en 2D et 3D", "href": OUTILS_EXTERNES.stm, "icone": "icones/stm.svg", "long": "Zones D en 2D et 3D (semelles sur pieux) : solveur par la méthode des rigidités, vérifications &sect;6.5, optimisation de Schlaich, choix des aciers HA, export DXF. Fonctionne hors ligne."},
+      {"nom": "Armature minimale de fissuration", "court": "Déformation gênée, éléments massifs", "route": "fissuration", "long": "Éléments massifs sous déformation gênée. Équation 7.1, réduction pour élément épais, vérification de l'ouverture de fissure."},
+      {"nom": "Murs en L", "court": "Stabilité et ferraillage", "href": null, "long": "Murs de soutènement en L : poussée des terres, stabilité externe (renversement, glissement, portance) et ferraillage du voile et de la semelle, en appelant les moteurs de l'équilibre statique, des sections en béton armé et du sol. En préparation."}
+  ]},
+  { id:"en1993", num:"EN 1993", titre:"Acier", note:"Profils laminés, reconstitués et creux ; assemblages.", outils:[
+      {"nom": "Sections acier", "court": "Classes, résistances, instabilités", "href": OUTILS_EXTERNES.sectionsEc3, "icone": "icones/sectionsEc3.svg", "long": "Profils IPE, HEA, HEB, PRS et tubes (EN 1993-1-1) : propriétés recalculées, classification sous la sollicitation réelle, sections efficaces de classe 4, résistances, flambement, déversement (M<sub>cr</sub> hors norme signalé) et flexion composée."},
+      {"nom": "Assemblages soudés et boulonnés", "court": "Soudures, platines, éclissages", "href": OUTILS_EXTERNES.assemblages, "icone": "icones/assemblages.svg", "long": "Cordons d'angle et pénétrations (EN 1993-1-8 &sect;4.5) : tête d'ancrage de tirant sur béton ou sur lierne, té, cruciforme, angle, recouvrement, profilé sur platine. Éclissage boulonné (&sect;3.4 à &sect;3.10) : cisaillement, pression diamétrale, groupe, section nette, cisaillement de bloc. Arrachement lamellaire, dispositions constructives."}
+  ]},
+  { id:"en1996", num:"EN 1996", titre:"Maçonnerie", note:"Maçonnerie non armée.", outils:[
+      {"nom": "Regards en maçonnerie", "court": "Regards enterrés sous trafic", "href": OUTILS_EXTERNES.regard, "icone": "icones/regard.svg", "long": "Murs de regards enterrés en maçonnerie non armée sous poussée des terres et trafic (SLW 60, LM1 ou charge saisie) : prédimensionnement EN 1996-3, bande verticale, méthode complète EN 1996-1-1 (compression, flexion, voûte horizontale, charge concentrée, cisaillement, soulèvement). Tables normatives pré-remplies, à vérifier."}
+  ]},
+  { id:"en1997", num:"EN 1997", titre:"Géotechnique", note:"Fondations, soutènements et stabilité des pentes.", outils:[
+      {"nom": "Fondations et soutènements", "court": "Semelles, pieux, parois, talus", "href": OUTILS_EXTERNES.fondbis, "icone": "icones/fondbis.svg", "long": "Un modèle de terrain pour toutes les vérifications (EN 1997-1:2004) : semelles et radiers, pieux, mur en L, paroi phasée, terre armée, stabilité de talus chargé (Bishop, DA1/DA2/DA3). Coefficients du sol renforcé indicatifs, à confirmer selon la NF P 94-270."},
+      {"nom": "Tirants de paroi", "court": "Ancrages d'une paroi de soutènement", "href": null, "long": "Vérification des tirants d'ancrage d'une paroi de soutènement (EN 1997-1 &sect;8). En préparation."}
+  ]},
+  { id:"outils", num:"Outils", titre:"Hors Eurocode", note:"Schémas pour les notes de calcul et veille normative.", outils:[
+      {"nom": "Schéma statique", "court": "Schémas pour les notes de calcul", "href": OUTILS_EXTERNES.schema, "long": "Schémas de poutres, portiques et consoles pour les notes de calcul : appuis, charges nommées, cotes, cas pratiques prêts à l'emploi et bibliothèque de modèles. Export SVG et PNG. Dessine, ne calcule pas."},
+      {"nom": "EC2 2e génération", "court": "Ce qui change avec l'EN 1992-1-1:2023", "href": OUTILS_EXTERNES.ec2Gen2, "icone": "icones/ec2Gen2.svg", "long": "Ce qui change avec l'EN 1992-1-1:2023, mécanisme par mécanisme : effort tranchant, poinçonnement, fissuration, ancrages. Articles avec exemples chiffrés et calculateurs qui rendent côte à côte les deux générations et tous les niveaux d'approximation."}
+  ]}
 ];
 
+for(const g of GROUPES){
+  PAGES[g.id] = { title:`${g.num} · ${g.titre}`, render:v=>renderTableau(v,g.id) };
+}
+const publies = g => g.outils.filter(o=>o.href!==null).length;
+
 function buildMenu(){
-  const m=$("menu"); let h="";
-  MENU.forEach(sec=>{
-    if(sec.group) h+=`<div class="menu-group"><span class="menu-group-lbl">${sec.group}</span></div>`;
-    sec.items.forEach(item=>{
-      // Adresse externe : lien sortant, ouvert dans un nouvel onglet, signale
-      // comme tel. L'utilisateur doit savoir qu'il quitte cette page.
-      if(!Array.isArray(item)){
-        // Sans adresse : outil prevu mais pas encore publie, affiche comme tel.
-        h+=item.href===null
-          ? `<span class="item disabled">${item.label} <small>(non publié)</small></span>`
-          : `<a class="item" href="${item.href}" target="_blank" rel="noopener">${item.label}</a>`;
-        return;
-      }
-      const [route,label]=item;
-      if(sec.soon){
-        h+=`<span class="item disabled">${label}</span>`;
-      }else{
-        h+=`<a class="item" href="#${route}" data-route="${route}">${label}</a>`;
-      }
+  const m=$("menu");
+  let h=`<a class="item" href="#accueil" data-route="accueil">Accueil</a>`;
+  GROUPES.forEach(g=>{
+    h+=`<div class="menu-group"><a class="menu-group-lbl" href="#${g.id}" data-route="${g.id}">${g.num} · ${g.titre}</a></div>`;
+    g.outils.forEach(o=>{
+      // Outil separe : lien sortant, nouvel onglet. L'utilisateur doit savoir
+      // qu'il quitte cette page.
+      if(o.route) h+=`<a class="item" href="#${o.route}" data-route="${o.route}">${o.nom}</a>`;
+      else if(o.href===null) h+=`<span class="item disabled">${o.nom} <small>(non publié)</small></span>`;
+      else h+=`<a class="item" href="${o.href}" target="_blank" rel="noopener">${o.nom}</a>`;
     });
   });
   m.innerHTML=h;
 }
 function setActive(route){
-  document.querySelectorAll("a.item").forEach(a=>{
+  document.querySelectorAll("#menu a[data-route]").forEach(a=>{
     const on=a.dataset.route===route;
     a.classList.toggle("active",on);
     if(on)a.setAttribute("aria-current","page"); else a.removeAttribute("aria-current");
@@ -408,120 +465,34 @@ function router(){
 window.addEventListener("hashchange",router);
 
 /* =========================================================
-   PAGE : ACCUEIL
+   PAGE : ACCUEIL ET PAGES PAR EUROCODE (tableau de bord)
    ========================================================= */
-function renderAccueil(view){
-  view.innerHTML = `
-  <div class="page-h">
-    <div>
-      <div class="eyebrow">Suite d'outils · Eurocodes</div>
-      <h1>Calcul de structures</h1>
-      <div class="sub">Outils de calcul pour bureau d'études, exécutés localement dans le navigateur</div>
-    </div>
-  </div>
+function tuile(o){
+  // Sans icone dessinee : l'initiale, sur un pave neutre.
+  const ic = o.icone
+    ? `<img class="ic" src="${o.icone}" alt="" width="64" height="64">`
+    : `<span class="ic ic-vide" aria-hidden="true">${o.nom[0]}</span>`;
+  const corps = `${ic}<b>${o.nom}</b><small>${o.court}</small><p class="long">${o.long}</p>`;
+  if(o.href===null) return `<div class="tuile attente">${corps}<span class="status">non publié</span></div>`;
+  if(o.route) return `<a class="tuile" href="#${o.route}">${corps}</a>`;
+  return `<a class="tuile" href="${o.href}" target="_blank" rel="noopener">${corps}<span class="ext" title="Outil séparé, s'ouvre dans un nouvel onglet">↗<span class="sr"> (nouvel onglet)</span></span></a>`;
+}
 
-  <div class="hero">
-    <p class="lead">Cette suite rassemble des outils de calcul de structures selon les <b>Eurocodes</b> : béton armé, acier, actions, et schémas pour les notes de calcul. Chaque outil expose la chaîne de calcul complète, avec les valeurs substituées, de sorte que la formule reste lisible derrière le résultat.</p>
-    <p class="lead">Les outils sont <b>indépendants</b> : chacun a sa page et son rythme, et presque tous leur propre dépôt. Cette page les relie plutôt qu'elle ne les absorbe — ce qui laisse à chacun la pile technique qui lui convient. Les cartes marquées « outil séparé » ouvrent un nouvel onglet.</p>
-  </div>
-
-  <div class="toolgrid">
-    <a class="tool-card" href="${OUTILS_EXTERNES.sectionUls}" target="_blank" rel="noopener"><span class="status">outil séparé</span>
-      <div class="cat">Sections</div>
-      <h3>Vérification de sections</h3>
-      <p>Flexion composée droite et déviée à l'ELU, domaines d'interaction, vérifications de service (contraintes, ouverture de fissures, courbure), effort tranchant &sect;6.2, dispositions constructives &sect;9.</p>
-    </a>
-    <a class="tool-card" href="${OUTILS_EXTERNES.interface}" target="_blank" rel="noopener"><span class="status">outil séparé</span>
-      <div class="cat">Sections</div>
-      <h3>Cisaillement à l'interface</h3>
-      <p>Reprises de bétonnage, dalle sur prédalle : v<sub>Edi</sub> et v<sub>Rdi</sub> selon l'EN 1992-1-1:2004 (&sect;6.2.5) ou 2023 (&sect;8.2.6, armatures ancrées ou non, effet de goujon). Un bouton bascule d'une génération à l'autre sans ressaisie.</p>
-    </a>
-    <a class="tool-card" href="${OUTILS_EXTERNES.ancrages}" target="_blank" rel="noopener"><span class="status">outil séparé</span>
-      <div class="cat">Dispositions constructives</div>
-      <h3>Ancrages et recouvrements</h3>
-      <p>Longueurs d'ancrage et de recouvrement (EN 1992-1-1 &sect;8) : adhérence, coefficients &alpha;<sub>1</sub> à &alpha;<sub>6</sub> avec leur statut, borne 0,7, armatures de couture, paquets de barres, mandrins, cadres, synthèse par diamètre.</p>
-    </a>
-    <a class="tool-card" href="${OUTILS_EXTERNES.colonne}" target="_blank" rel="noopener"><span class="status">outil séparé</span>
-      <div class="cat">Poteaux</div>
-      <h3>Colonne EC2</h3>
-      <p>Poteaux en béton armé : flambement et effets du second ordre (EN 1992-1-1 &sect;5.8, courbure nominale ou rigidité nominale), analyse P-&Delta; itérative, résistance de section N-M et flexion déviée.</p>
-    </a>
-    <a class="tool-card" href="${OUTILS_EXTERNES.stm}" target="_blank" rel="noopener"><span class="status">outil séparé</span>
-      <div class="cat">Modèles bielle-tirant</div>
-      <h3>Bielle-tirant</h3>
-      <p>Zones D en 2D et 3D (semelles sur pieux) : solveur par la méthode des rigidités, vérifications &sect;6.5, optimisation de Schlaich, choix des aciers HA, export DXF. Fonctionne hors ligne.</p>
-    </a>
-    <a class="tool-card" href="${OUTILS_EXTERNES.poinconnement}" target="_blank" rel="noopener"><span class="status">outil séparé</span>
-      <div class="cat">Dalles</div>
-      <h3>Poinçonnement</h3>
-      <p>Dalles pleines au droit d'un poteau (&sect;6.4) : périmètres de contrôle par construction géométrique, coefficient d'excentrement, résistance avec et sans armatures, écrasement au nu du poteau.</p>
-    </a>
-    <a class="tool-card" href="${OUTILS_EXTERNES.sectionsEc3}" target="_blank" rel="noopener"><span class="status">outil séparé</span>
-      <div class="cat">Acier &middot; EC3</div>
-      <h3>Sections acier</h3>
-      <p>Profils IPE, HEA, HEB, PRS et tubes (EN 1993-1-1) : propriétés recalculées, classification sous la sollicitation réelle, sections efficaces de classe 4, résistances, flambement, déversement (M<sub>cr</sub> hors norme signalé) et flexion composée.</p>
-    </a>
-    <a class="tool-card" href="${OUTILS_EXTERNES.assemblages}" target="_blank" rel="noopener"><span class="status">outil séparé</span>
-      <div class="cat">Acier &middot; EC3</div>
-      <h3>Assemblages soudés et boulonnés</h3>
-      <p>Cordons d'angle et pénétrations (EN 1993-1-8 &sect;4.5) : tête d'ancrage de tirant sur béton ou sur lierne, té, cruciforme, angle, recouvrement, profilé sur platine. Éclissage boulonné (&sect;3.4 à &sect;3.10) : cisaillement, pression diamétrale, groupe, section nette, cisaillement de bloc. Arrachement lamellaire, dispositions constructives.</p>
-    </a>
-    <a class="tool-card" href="${OUTILS_EXTERNES.combinaisons}" target="_blank" rel="noopener"><span class="status">outil séparé</span>
-      <div class="cat">Actions &middot; EC0</div>
-      <h3>Combinaisons d'actions</h3>
-      <p>Combinaisons de l'EN 1990 pour les bâtiments : ELU EQU, STR/GEO (6.10 ou 6.10a/b), GEO, accidentelles, ELS caractéristiques, fréquentes et quasi permanentes ; groupes d'actions exclusives, valeurs combinées et enveloppes. Export CSV et Excel ; import des cas de neige et vent.</p>
-    </a>
-    <a class="tool-card" href="${OUTILS_EXTERNES.climat}" target="_blank" rel="noopener"><span class="status">outil séparé</span>
-      <div class="cat">Actions &middot; EC1</div>
-      <h3>Neige et vent</h3>
-      <p>Charges de neige (EN 1991-1-3) et actions du vent (EN 1991-1-4) sur un bâtiment rectangulaire, zone par zone : pression de pointe, zonage des parois et des toitures, c<sub>pe,1</sub> et c<sub>pe,10</sub>, cas de neige et accumulations. Profil normatif sourcé, v<sub>b,0</sub> et s<sub>k</sub> saisis.</p>
-    </a>
-    <a class="tool-card" href="${OUTILS_EXTERNES.fondbis}" target="_blank" rel="noopener"><span class="status">outil séparé</span>
-      <div class="cat">Géotechnique &middot; EC7</div>
-      <h3>Fondations et soutènements</h3>
-      <p>Un modèle de terrain pour toutes les vérifications (EN 1997-1:2004) : semelles et radiers, pieux, mur en L, paroi phasée, terre armée, stabilité de talus chargé (Bishop, DA1/DA2/DA3). Coefficients du sol renforcé indicatifs, à confirmer selon la NF P 94-270.</p>
-    </a>
-    <a class="tool-card" href="${OUTILS_EXTERNES.equilibre}" target="_blank" rel="noopener"><span class="status">outil séparé</span>
-      <div class="cat">Équilibre et soutènement</div>
-      <h3>Équilibre statique</h3>
-      <p>Équilibre d'un élément plan à l'ELU : segments pesants (L, U, cadres), charges ponctuelles, réparties, triangulaires, trapézoïdales et moments. Bras de levier et rôle de chaque charge, renversement (EQU) avec tableau charge / distance / &gamma;<sub>f</sub> / moments stabilisants et déstabilisants, glissement, soulèvement (UPL), position de la résultante.</p>
-    </a>
-    <div class="tool-card soon"><span class="status">non publié</span>
-      <div class="cat">Équilibre et soutènement</div>
-      <h3>Murs en L</h3>
-      <p>Murs de soutènement en L : poussée des terres, stabilité externe (renversement, glissement, portance) et ferraillage du voile et de la semelle, en appelant les moteurs de l'équilibre statique, des sections en béton armé et du sol. En préparation.</p>
-    </div>
-    <div class="tool-card soon"><span class="status">non publié</span>
-      <div class="cat">Géotechnique &middot; EC7</div>
-      <h3>Tirants de paroi</h3>
-      <p>Vérification des tirants d'ancrage d'une paroi de soutènement (EN 1997-1 &sect;8). En préparation.</p>
-    </div>
-    <a class="tool-card" href="${OUTILS_EXTERNES.regard}" target="_blank" rel="noopener"><span class="status">outil séparé</span>
-      <div class="cat">Maçonnerie &middot; EC6</div>
-      <h3>Regards en maçonnerie</h3>
-      <p>Murs de regards enterrés en maçonnerie non armée sous poussée des terres et trafic (SLW 60, LM1 ou charge saisie) : prédimensionnement EN 1996-3, bande verticale, méthode complète EN 1996-1-1 (compression, flexion, voûte horizontale, charge concentrée, cisaillement, soulèvement). Tables normatives pré-remplies, à vérifier.</p>
-    </a>
-    <a class="tool-card" href="#fissuration">
-      <div class="cat">Fissuration &amp; durabilité</div>
-      <h3>Armature minimale de fissuration</h3>
-      <p>Éléments massifs sous déformation gênée. Équation 7.1, réduction pour élément épais, vérification de l'ouverture de fissure.</p>
-    </a>
-    <a class="tool-card" href="${OUTILS_EXTERNES.schema}" target="_blank" rel="noopener"><span class="status">outil séparé</span>
-      <div class="cat">Schémas de calcul</div>
-      <h3>Schéma statique</h3>
-      <p>Schémas de poutres, portiques et consoles pour les notes de calcul : appuis, charges nommées, cotes, cas pratiques prêts à l'emploi et bibliothèque de modèles. Export SVG et PNG. Dessine, ne calcule pas.</p>
-    </a>
-    <a class="tool-card" href="${OUTILS_EXTERNES.poutres}" target="_blank" rel="noopener"><span class="status">outil séparé</span>
-      <div class="cat">Schémas de calcul</div>
-      <h3>Poutres continues</h3>
-      <p>Poutres continues et hyperstatiques : appuis, ressorts, rotules, tassements ; charges G et Q. Enveloppes ELU et ELS avec charges alternées, puis béton armé (aciers, effort tranchant, épure d'arrêt, ancrages) ou acier (section, déversement, flèche, via sections-ec3).</p>
-    </a>
-    <a class="tool-card" href="${OUTILS_EXTERNES.ec2Gen2}" target="_blank" rel="noopener"><span class="status">outil séparé</span>
-      <div class="cat">Veille normative</div>
-      <h3>EC2 2e génération</h3>
-      <p>Ce qui change avec l'EN 1992-1-1:2023, mécanisme par mécanisme : effort tranchant, poinçonnement, fissuration, ancrages. Articles avec exemples chiffrés et calculateurs qui rendent côte à côte les deux générations et tous les niveaux d'approximation.</p>
-    </a>
-  </div>`;
+function renderTableau(view,id){
+  const g = GROUPES.find(x=>x.id===id);
+  const total = GROUPES.reduce((n,x)=>n+publies(x),0);
+  const nav = `<a href="#accueil" class="${g?"":"actif"}"${g?"":' aria-current="page"'}><span class="num">Tout</span>Tous les outils<i>${total}</i></a>`
+    + GROUPES.map(x=>`<a href="#${x.id}" class="${x===g?"actif":""}"${x===g?' aria-current="page"':""}><span class="num">${x.num}</span>${x.titre}<i>${publies(x)}</i></a>`).join("");
+  const tete = g
+    ? `<div class="page-h"><div><div class="eyebrow">Accueil · ${g.num}</div><h1>${g.titre}</h1><div class="sub">${g.note}</div></div></div>`
+    : `<div class="page-h"><div><div class="eyebrow">Suite d'outils · Eurocodes</div><h1>Calcul de structures</h1>
+         <div class="sub">Outils de calcul pour bureau d'études, exécutés localement dans le navigateur, rangés par Eurocode.</div></div></div>
+       <p class="lead">Chaque outil expose la chaîne de calcul complète, avec les valeurs substituées, de sorte que la formule reste lisible derrière le résultat. Les outils marqués ↗ sont des applications séparées : ils s'ouvrent dans un nouvel onglet.</p>`;
+  const corps = g
+    ? `<div class="tuiles detail">${g.outils.map(tuile).join("")}</div>`
+    : GROUPES.map(x=>`<section class="tb-groupe"><h2><a href="#${x.id}"><span class="num">${x.num}</span> ${x.titre}</a></h2>
+         <div class="tuiles">${x.outils.map(tuile).join("")}</div></section>`).join("");
+  view.innerHTML = `<div class="tb"><nav class="tb-nav" aria-label="Eurocodes">${nav}</nav><div class="tb-main">${tete}${corps}</div></div>`;
 }
 
 /* =========================================================
