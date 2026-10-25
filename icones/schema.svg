@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="72" fill="#f7f7f6"/>
+  <g stroke="#1a1a1a" stroke-width="14" stroke-linecap="round">
+    <line x1="128" y1="196" x2="128" y2="392"/>
+    <line x1="384" y1="196" x2="384" y2="392"/>
+    <line x1="128" y1="196" x2="384" y2="196"/>
+  </g>
+  <line x1="84" y1="400" x2="172" y2="400" stroke="#1a1a1a" stroke-width="10" stroke-linecap="round"/>
+  <g stroke="#1a1a1a" stroke-width="6" stroke-linecap="round">
+    <line x1="96" y1="404" x2="80" y2="428"/><line x1="120" y1="404" x2="104" y2="428"/><line x1="144" y1="404" x2="128" y2="428"/><line x1="168" y1="404" x2="152" y2="428"/>
+  </g>
+  <polygon points="384,392 356,436 412,436" fill="none" stroke="#1a1a1a" stroke-width="8"/>
+  <line x1="148" y1="88" x2="364" y2="88" stroke="#1e5aa8" stroke-width="8" stroke-linecap="round"/>
+  <g stroke="#1e5aa8" stroke-width="8" stroke-linecap="round">
+    <line x1="160" y1="88" x2="160" y2="156"/><line x1="216" y1="88" x2="216" y2="156"/><line x1="272" y1="88" x2="272" y2="156"/><line x1="328" y1="88" x2="328" y2="156"/>
+  </g>
+  <g fill="#1e5aa8">
+    <polygon points="146,150 174,150 160,180"/><polygon points="202,150 230,150 216,180"/><polygon points="258,150 286,150 272,180"/><polygon points="314,150 342,150 328,180"/>
+  </g>
+  <line x1="40" y1="236" x2="92" y2="236" stroke="#a8442a" stroke-width="12" stroke-linecap="round"/>
+  <polygon points="86,214 120,236 86,258" fill="#a8442a"/>
+  <g stroke="#9a978f" stroke-width="6">
+    <line x1="128" y1="468" x2="384" y2="468"/><line x1="128" y1="452" x2="128" y2="484"/><line x1="384" y1="452" x2="384" y2="484"/>
+  </g>
+</svg>
