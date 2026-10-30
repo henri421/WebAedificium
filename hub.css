@@ -1,0 +1,295 @@
+  :root{
+    /* ---- Chassis ---- */
+    --fond:#f7f7f6;             /* fond de page */
+    --surface:#ffffff;          /* cartes, panneaux, champs */
+    --surface-appui:#f2f1ec;    /* en-tetes de tableau, boutons au repos, blocs d'attente */
+    --texte:#1a1a1a;
+    --texte-doux:#4a4842;       /* notes, libelles de ligne, corps secondaire */
+    --texte-faible:#6a6862;     /* legend, sous-titres, surtitres */
+    --bordure:#c8c6c0;          /* filet structurant : cadres, champs, separateurs */
+    --bordure-douce:#eceae4;    /* filet interne : lignes de liste, lignes de tableau */
+
+    /* ---- Interface ---- */
+    --accent:#1e5aa8;           /* focus, liens, etat actif — JAMAIS une couleur de sens */
+    --accent-doux:#eaf1f9;      /* fond d'un champ actif, surlignage de zone */
+
+    /* ---- Couleurs de sens ---- */
+    --compression:#2f5d8a;      /* bielle, beton comprime, domaine resistant */
+    --traction:#a8442a;         /* tirant, acier tendu, point sollicitant */
+    --beton:#e7eaee;            /* aplat de matiere dans les traces */
+    --neutre:#9a978f;           /* barre a effort nul, reperes de cotation */
+
+    /* ---- Verdicts : trois etats, pas quatre ---- */
+    --ok:#1f6f3f;      --ok-fond:#eaf4ee;
+    --alerte:#8a6d00;  --alerte-fond:#fdf6e3;
+    --refus:#a52121;   --refus-fond:#f8ecec;
+
+    /* ---- Typographie ---- */
+    --sans:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+
+    /* ---- Rayons ---- */
+    --rayon:4px;                /* cartes, panneaux, fieldsets */
+    --rayon-petit:3px;          /* champs, boutons, pastilles */
+
+    color-scheme:light;
+
+    /* ---- Gabarit propre au hub ---- */
+    --nav:252px;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;color:var(--texte);background:var(--fond);font-family:var(--sans);font-size:14px;line-height:1.5}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+
+  /* Tout nombre, toute unite : monoespace tabulaire. Le monoespace ne sert
+     jamais de police de titre. */
+  .field .u,.card .val,.kv,.step,.verdict,table,input[type=number]{
+    font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+  /* Surtitres, libelles de panneau, pastilles et boutons : sans, majuscules
+     espacees. */
+  .eyebrow,.t-eyebrow,.menu-group-lbl,.subh,.tag,.card .k,.tuile .status,.placeholder .big,caption,.step.head,.verdict small,
+  button.tool,details.adv summary,details.deriv summary,.panel-h{
+    font-family:var(--sans);font-size:.72rem;letter-spacing:.08em;
+    text-transform:uppercase;font-weight:600}
+
+  /* ---------- App shell ---------- */
+  /*
+   * Le volet de navigation est un TIROIR, a toutes les largeurs.
+   *
+   * Il occupait auparavant une colonne permanente de 252 px sur grand ecran.
+   * Un menu de six entrees, qu'on consulte quelques secondes puis plus du
+   * tout, n'a pas a retenir un quart de la largeur pendant qu'on saisit. Il
+   * s'ouvre donc sur demande, par l'icone a trois barres, et se referme des
+   * qu'on a choisi — au clic sur le voile, a la touche Echap, ou en changeant
+   * de page.
+   */
+  .app{display:grid;grid-template-columns:1fr;min-height:100vh}
+  aside.nav{
+    background:var(--surface);border-right:1px solid var(--bordure);
+    position:fixed;left:0;top:0;width:var(--nav);height:100vh;overflow-y:auto;
+    display:flex;flex-direction:column;z-index:40;
+    /* Ferme, le volet sort AUSSI de l'ordre de tabulation : `visibility`
+       fait ce que `transform` seul ne fait pas. */
+    transform:translateX(-100%);visibility:hidden;
+    transition:transform .2s, visibility .2s;
+  }
+  body.nav-open aside.nav{transform:translateX(0);visibility:visible}
+  .brand{padding:20px 18px 16px;border-bottom:1px solid var(--bordure-douce)}
+  .brand .eyebrow{color:var(--texte-faible)}
+  .brand .name{font-size:.95rem;font-weight:600;margin-top:3px}
+  .brand .desc{font-size:.8rem;color:var(--texte-doux);margin-top:2px}
+  nav.menu{padding:10px 0;flex:1}
+  .menu-group{padding:12px 18px 4px}
+  .menu-group-lbl{color:var(--texte-faible)}
+  a.item,span.item{
+    display:flex;align-items:center;justify-content:space-between;gap:8px;
+    padding:8px 18px 8px 16px;font-size:.85rem;color:var(--texte);text-decoration:none;
+    border-left:3px solid transparent;cursor:pointer;
+  }
+  a.item:hover{background:var(--fond)}
+  a.item.active{background:var(--accent-doux);border-left-color:var(--accent);color:var(--accent);font-weight:600}
+  a.item:focus-visible{outline-offset:-2px}
+  span.item.disabled{color:var(--texte-faible);cursor:default}
+  .tag{padding:2px 6px;border-radius:var(--rayon-petit);background:var(--surface-appui);
+    color:var(--texte-faible);border:1px solid var(--bordure-douce)}
+  .nav-foot{padding:14px 18px;border-top:1px solid var(--bordure-douce);font-size:.8rem;color:var(--texte-doux);line-height:1.45}
+
+  main{min-width:0}
+
+  /*
+   * La barre du haut porte l'icone du tiroir et l'identite de la suite. Elle
+   * reste collee en haut : le menu doit etre atteignable sans remonter la
+   * page.
+   */
+  .topbar{display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:30;
+    background:var(--fond);border-bottom:1px solid var(--bordure);padding:10px 16px}
+  .topbar .t-name{font-weight:600;font-size:.95rem}
+  .topbar .t-eyebrow{color:var(--texte-faible)}
+  .hamb{display:inline-flex;flex-direction:column;gap:3px;background:none;
+    border:1px solid var(--bordure);border-radius:var(--rayon-petit);padding:8px 9px;cursor:pointer}
+  .hamb:hover{background:var(--surface-appui)}
+  .hamb span{width:16px;height:2px;background:var(--texte);display:block}
+
+  /*
+   * Le voile n'existe QUE volet ouvert. Sans la regle de base `display:none`,
+   * il redevient un div ordinaire, donc une CELLULE de la grille `.app` :
+   * il occupait la premiere colonne et repoussait le contenu hors de l'ecran.
+   */
+  .scrim{display:none;position:fixed;inset:0;background:var(--texte);opacity:.35;z-index:35}
+  body.nav-open .scrim{display:block}
+
+  .view-wrap{max-width:1120px;margin:0 auto;padding:0 22px}
+
+  .page-h{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;
+    padding:22px 0 16px;border-bottom:1px solid var(--bordure);margin-bottom:22px}
+  .page-h .eyebrow{color:var(--texte-faible)}
+  .page-h h1{font-size:1.1rem;margin:6px 0 2px;letter-spacing:.02em;font-weight:400}
+  .page-h .sub{color:var(--texte-doux);font-size:.8rem}
+  .verdict{font-size:.85rem;border-left:3px solid;border-radius:var(--rayon);padding:9px 13px;white-space:nowrap;font-weight:600}
+  .verdict small{display:block;font-weight:400;color:inherit}
+  .v-ok{color:var(--ok);border-color:var(--ok);background:var(--ok-fond)}
+  .v-no{color:var(--refus);border-color:var(--refus);background:var(--refus-fond)}
+
+  /* ---------- Accueil : tableau de bord par Eurocode ---------- */
+  .tb{display:grid;grid-template-columns:220px minmax(0,1fr);gap:22px;padding-top:22px}
+  .tb-nav{display:flex;flex-direction:column;align-self:start;position:sticky;top:72px;
+    background:var(--surface);border:1px solid var(--bordure);border-radius:var(--rayon);padding:6px}
+  .tb-nav a{display:flex;gap:8px;align-items:baseline;padding:7px 10px;border-radius:var(--rayon-petit);
+    color:var(--texte);text-decoration:none;font-size:.85rem}
+  .tb-nav a:hover{background:var(--fond)}
+  .tb-nav a.actif{background:var(--accent-doux);color:var(--accent);font-weight:600}
+  .tb-nav .num{font-family:var(--mono);font-size:.78rem;min-width:4.4rem}
+  .tb-nav i{margin-left:auto;font-style:normal;font-family:var(--mono);font-size:.78rem;color:var(--texte-faible)}
+  .tb-main .page-h{padding-top:0}
+  .tb-main .lead{font-size:.85rem;max-width:68ch;margin:0 0 8px}
+  .tb-groupe{margin:22px 0 0}
+  .tb-groupe h2{font-size:.95rem;font-weight:600;margin:0 0 10px;padding-bottom:4px;border-bottom:1px solid var(--bordure)}
+  .tb-groupe h2 a{color:inherit;text-decoration:none}
+  .tb-groupe h2 a:hover{color:var(--accent)}
+  .tb-groupe .num,.tb-main .num{font-family:var(--mono)}
+  .tuiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
+  .tuiles.detail{grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
+  .tuile{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:5px;
+    background:var(--surface);border:1px solid var(--bordure);border-radius:var(--rayon);padding:14px;
+    color:inherit;text-decoration:none;transition:border-color .15s}
+  a.tuile:hover{border-color:var(--accent)}
+  .tuile .ic{width:64px;height:64px;border-radius:12px;flex:none}
+  .ic-vide{display:inline-flex;align-items:center;justify-content:center;background:var(--surface-appui);
+    border:1px solid var(--bordure);color:var(--texte-faible);font-weight:600;font-size:1.5rem}
+  .tuile b{font-size:.92rem;line-height:1.3}
+  .tuile small{font-size:.8rem;color:var(--texte-doux);line-height:1.35}
+  .tuile .long{display:none;font-size:.82rem;color:var(--texte-doux);margin:4px 0 0}
+  .tuiles.detail .long{display:block}
+  .tuile .ext{position:absolute;top:10px;right:12px;color:var(--texte-faible);font-size:.9rem}
+  /* Pastille d'etat : information, pas verdict, donc pas de couleur de sens. */
+  .tuile .status{position:absolute;top:12px;right:12px;padding:2px 6px;border-radius:var(--rayon-petit);
+    background:var(--surface-appui);color:var(--texte-faible);border:1px solid var(--bordure-douce)}
+  .tuile.attente{opacity:.6}
+  .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  .menu-group a.menu-group-lbl{color:var(--texte-faible);text-decoration:none}
+  .menu-group a.menu-group-lbl:hover,.menu-group a.menu-group-lbl.active{color:var(--accent)}
+  @media(max-width:760px){
+    .tb{grid-template-columns:1fr;gap:14px;padding-top:14px}
+    .tb-nav{position:static;flex-direction:row;overflow-x:auto;padding:4px}
+    .tb-nav a{white-space:nowrap;flex:none}
+    .tb-nav .num{min-width:0}
+    .tuiles{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+    .tuiles.detail{grid-template-columns:1fr}
+    .tuile{padding:12px}
+    .tuile .ic{width:52px;height:52px;border-radius:10px}
+  }
+
+  /* ---------- shared building blocks (fissuration) ---------- */
+  .grid{display:grid;grid-template-columns:340px 1fr;gap:22px;margin:0 0 22px}
+  @media(max-width:900px){.grid{grid-template-columns:1fr}}
+  .panel{background:var(--surface);border:1px solid var(--bordure);border-radius:var(--rayon)}
+  .panel-h{color:var(--texte-faible);background:var(--surface-appui);
+    border-bottom:1px solid var(--bordure-douce);padding:9px 14px;display:flex;align-items:center;gap:8px}
+  .panel-h .num{color:var(--accent)}
+  .panel-b{padding:12px 14px}
+  .field{display:grid;grid-template-columns:1fr 96px;align-items:center;gap:8px;margin:8px 0;font-size:.85rem}
+  .field .u{font-size:.8rem;color:var(--texte-doux);text-align:left;grid-column:2;margin-top:-4px}
+  .field.stack{grid-template-columns:1fr}
+  input,select{padding:.28rem .4rem;border:1px solid var(--bordure);border-radius:var(--rayon-petit);
+    background:var(--surface);color:inherit;font:inherit;width:100%}
+  input[type=number]{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right;-moz-appearance:textfield}
+  select{text-align:left}
+  /* Le champ n'est habille d'accent-doux que pendant la saisie. */
+  input:focus,select:focus{background:var(--accent-doux)}
+  .note{font-size:.8rem;color:var(--texte-doux);margin:2px 0 10px;line-height:1.35}
+  .grp{border-top:1px solid var(--bordure-douce);margin-top:6px;padding-top:8px}
+  .grp:first-child{border-top:0;margin-top:0;padding-top:0}
+  .subh{color:var(--texte-faible);padding:0 0 4px}
+  details.adv summary{cursor:pointer;color:var(--texte-faible);padding:6px 0}
+  details.adv[open] summary{color:var(--texte)}
+
+  .draw-wrap{background:var(--surface);border:1px solid var(--bordure);border-radius:var(--rayon);margin-bottom:22px}
+  .draw-b{padding:6px}
+  svg.section{display:block;width:100%;height:auto;background:var(--surface);
+    border:1px solid var(--bordure-douce);border-radius:var(--rayon-petit)}
+  .legend{display:flex;gap:16px;flex-wrap:wrap;font-size:.8rem;color:var(--texte-doux);padding:8px 12px;border-top:1px solid var(--bordure-douce)}
+  .legend i{display:inline-block;width:11px;height:11px;margin-right:5px;vertical-align:-1px;border-radius:1px}
+
+  .cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+  @media(max-width:520px){.cards{grid-template-columns:1fr}}
+  .card{border:1px solid var(--bordure);border-radius:var(--rayon);padding:12px 14px;background:var(--surface)}
+  .card .k{color:var(--texte-faible)}
+  .card .val{font-size:1.1rem;font-weight:600;margin-top:2px;line-height:1.1}
+  .card .val small{font-size:.8rem;color:var(--texte-doux);font-weight:400}
+  .card .x{font-family:var(--sans);font-size:.8rem;color:var(--texte-doux);margin-top:3px}
+  .card.gov{border-color:var(--accent);background:var(--accent-doux)}
+  .card.gov .val{color:var(--accent)}
+
+  /* Verdict : lisere gauche de 3px, fond *-fond, texte en couleur pleine. */
+  .verif{border:1px solid var(--bordure);border-radius:var(--rayon);overflow:hidden}
+  .verif.ok{border-left:3px solid var(--ok)} .verif.no{border-left:3px solid var(--refus)}
+  .verif-h{padding:10px 14px;font-size:.85rem;font-weight:600;display:flex;justify-content:space-between;align-items:center;gap:10px}
+  .verif.ok .verif-h{background:var(--ok-fond);color:var(--ok)}
+  .verif.no .verif-h{background:var(--refus-fond);color:var(--refus)}
+  .verif-b{padding:6px 14px 12px}
+  .kv{display:flex;justify-content:space-between;gap:10px;font-size:.85rem;padding:5px 0;border-bottom:1px solid var(--bordure-douce)}
+  .kv:last-child{border-bottom:0}
+  .kv .lab{font-family:var(--sans);color:var(--texte-doux)}
+
+  details.deriv{margin-top:14px;background:var(--surface);border:1px solid var(--bordure);border-radius:var(--rayon)}
+  details.deriv summary{cursor:pointer;color:var(--texte-faible);padding:11px 14px;list-style:none}
+  details.deriv summary::-webkit-details-marker{display:none}
+  details.deriv summary::before{content:"▸ ";color:var(--accent)}
+  details.deriv[open] summary::before{content:"▾ "}
+  .deriv-b{padding:2px 14px 14px;border-top:1px solid var(--bordure-douce)}
+  .step{font-size:.85rem;padding:7px 0;border-bottom:1px solid var(--bordure-douce);display:grid;grid-template-columns:150px 1fr auto;gap:10px;align-items:baseline}
+  @media(max-width:600px){.step{grid-template-columns:1fr}}
+  .step .sym{color:var(--accent)}
+  .step .expr{color:var(--texte-doux);word-break:break-word}
+  .step .res{text-align:right;white-space:nowrap}
+  .step.head{grid-template-columns:1fr;border-bottom:1px solid var(--bordure);color:var(--texte-faible);margin-top:8px;padding-bottom:4px}
+
+  .ref{margin:22px 0}
+  table{border-collapse:collapse;width:100%;font-size:.85rem;background:var(--surface)}
+  th,td{border-bottom:1px solid var(--bordure-douce);padding:5px 8px;text-align:center;font-weight:400}
+  th{background:var(--surface-appui);color:var(--texte-doux)}
+  td.l,th.l{text-align:left}
+  caption{text-align:left;color:var(--texte-faible);padding:10px 0 6px}
+
+  .foot{border-top:1px solid var(--bordure);padding:18px 0 40px;color:var(--texte-doux);font-size:.8rem;line-height:1.5;margin-top:22px}
+  .foot b{color:var(--texte)}
+  .tools{display:flex;gap:10px;margin:0 0 12px;flex-wrap:wrap}
+  button.tool{cursor:pointer;padding:.32rem .7rem;border:1px solid var(--bordure);border-radius:var(--rayon-petit);
+    background:var(--surface-appui);color:inherit}
+  button.tool:hover{background:color-mix(in srgb, var(--surface-appui) 95%, var(--texte))}
+
+  /* Attente : bloc gris, pas un verdict — donc pas de lisere colore. */
+  .placeholder{border:1px solid var(--bordure);border-radius:var(--rayon);background:var(--surface-appui);padding:34px 24px;text-align:center;margin:8px 0}
+  .placeholder .big{color:var(--texte-faible)}
+  .placeholder p{max-width:52ch;margin:10px auto 0;color:var(--texte-doux);font-size:.85rem}
+
+  @media print{
+    body{background:#fff}
+    .app{grid-template-columns:1fr}
+    aside.nav,.topbar,.hamb,.scrim,.tools,button.tool,details.deriv,details.adv{display:none!important}
+    input,select{border:0;background:none;padding:0}
+  }
+  @media(prefers-reduced-motion:no-preference){
+    .card .val,.verif,.verdict,.tuile{transition:.18s}
+  }
+  @media(prefers-reduced-motion:reduce){
+    aside.nav{transition:none}
+  }
+
+/* Une valeur forcee hors du domaine physique n'est pas un echec de
+   verification : c'est un AVERTISSEMENT. D'ou la couleur d'alerte, jamais
+   celle du refus — « une couleur de sens ne sert jamais de decor » vaut
+   aussi dans l'autre sens. */
+.avert{margin:0 0 12px}
+.avert ul{margin:0;padding:10px 14px 10px 28px;list-style:disc;
+  background:var(--alerte-fond);border-left:3px solid var(--alerte);
+  border-radius:var(--rayon-petit);color:var(--alerte);font-size:.82rem;line-height:1.45}
+.avert li+li{margin-top:6px}
+
+/* Lien de langue FR / EN, a droite de la barre du haut. */
+.topbar .barre-langue{margin-left:auto;font-size:.72rem;font-weight:600;letter-spacing:.08em;
+  color:var(--accent);text-decoration:none;border:1px solid var(--bordure);
+  border-radius:var(--rayon-petit);padding:3px 7px}
+.topbar .barre-langue:hover{background:var(--accent-doux)}

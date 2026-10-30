@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aedificium · Structural design tools</title>
+<link rel="stylesheet" href="../hub.css">
+</head>
+<body>
+<div class="app">
+  <div class="scrim" onclick="toggleNav(false)"></div>
+
+  <aside class="nav" id="nav">
+    <div class="brand">
+      <div class="eyebrow">Aedificium · Structures</div>
+      <div class="name">Design tools</div>
+      <div class="desc">Engineering office · Eurocodes</div>
+    </div>
+    <nav class="menu" id="menu"></nav>
+    <div class="nav-foot">
+      Calculations run locally, with no data sent. Eurocodes, 1<sup>st</sup> generation, recommended values.
+    </div>
+  </aside>
+
+  <main>
+    <div class="topbar">
+      <button class="hamb" id="hamb" aria-label="Menu" aria-controls="nav" aria-expanded="false"
+              onclick="toggleNav(!document.body.classList.contains('nav-open'))"><span></span><span></span><span></span></button>
+      <div><div class="t-eyebrow">Aedificium · Structures</div><div class="t-name">Design tools</div></div>
+      <a class="barre-langue" id="langue" href="../" hreflang="fr" lang="fr" aria-label="Version française">FR</a>
+    </div>
+    <div class="view-wrap"><div id="view"></div></div>
+  </main>
+</div>
+
+<!--
+  Charge AVANT hub.js : les deux sont des scripts classiques et partagent la
+  portee globale, donc `armatureMinimaleBridage` y est visible. Les passer en
+  module casserait les `onclick` en ligne de la page.
+-->
+<script src="../asmin.js"></script>
+<script src="../hub.js"></script>
+</body>
+</html>
