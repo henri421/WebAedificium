@@ -30,6 +30,7 @@ let vue = null; // conteneur de la page
 let projet = null; // projet ouvert
 let selection = null; // id du noeud ou du calcul selectionne
 let coupe = null; // id du noeud coupe, en attente de « Coller ici »
+let autres = []; // resumes de tous les projets, pour passer de l'un a l'autre
 
 /* ------------------------------------------------------------------ */
 /* Boites de dialogue                                                 */
@@ -110,6 +111,11 @@ async function modifier(fn) {
 
 async function ouvrir(id) {
   projet = id ? await depot.lire(id) : null;
+  try {
+    autres = await depot.lister();
+  } catch {
+    autres = [];
+  }
   if (id && !projet) {
     location.hash = '#projets';
     return;
@@ -141,6 +147,27 @@ async function dessinerListe() {
   } catch (e) {
     signaler(messageDErreur(e));
   }
+  // Contenu de chaque projet, pour le parcourir sans l'ouvrir.
+  const contenus = new Map();
+  for (const r of liste) {
+    try {
+      const p = await depot.lire(r.id);
+      if (!p) continue;
+      const els = P.elements(p);
+      const calculs = els.flatMap((e) => e.calculs);
+      const noms = [...new Set(calculs.map((c) => nomApp(c)))];
+      contenus.set(r.id, { elements: els.length, calculs: calculs.length, feuilles: calculs.reduce((n, c) => n + c.feuilles.length, 0), noms });
+    } catch {
+      // Projet illisible : il reste listé, sans resume.
+    }
+  }
+  const resumeDe = (id) => {
+    const c = contenus.get(id);
+    if (!c) return '';
+    return `<span class="pj-contenu">${c.elements} ${T('élément(s)', 'element(s)')} · ${c.calculs} ${T('calcul(s)', 'calculation(s)')} · ${c.feuilles} ${T('feuille(s)', 'sheet(s)')}${
+      c.noms.length ? ` — ${c.noms.map(ech).join(', ')}` : ''
+    }</span>`;
+  };
   vue.innerHTML = `
     <div class="page-h"><div><div class="eyebrow">${T('Accueil', 'Home')} · ${T('Projets', 'Projects')}</div>
       <h1>${T('Mes projets', 'My projects')}</h1>
@@ -157,7 +184,7 @@ async function dessinerListe() {
         ? `<p class="pj-vide">${T('Aucun projet dans ce navigateur.', 'No project in this browser.')}</p>`
         : `<ul class="pj-liste">${liste
             .map(
-              (r) => `<li><a href="#projets/${ech(r.id)}"><span class="pj-nom">${ech(r.nom)}</span>
+              (r) => `<li><a href="#projets/${ech(r.id)}"><span class="pj-ligne"><span class="pj-nom">${ech(r.nom)}</span>${resumeDe(r.id)}</span>
                 <span class="pj-date">${T('modifié le', 'modified')} ${ech(date(r.modifie))}</span></a></li>`
             )
             .join('')}</ul>`
@@ -274,7 +301,15 @@ function dessinerProjet() {
   vue.innerHTML = `
     <div class="page-h"><div><div class="eyebrow"><a href="#projets">${T('Mes projets', 'My projects')}</a> · ${T('Projet', 'Project')}</div>
       <h1>${ech(projet.nom)}</h1>
-      <div class="sub">${T('Modifié le', 'Modified')} ${ech(date(projet.modifie))}</div></div></div>
+      <div class="sub">${T('Modifié le', 'Modified')} ${ech(date(projet.modifie))}</div></div>
+      ${
+        autres.length > 1
+          ? `<label class="pj-changer">${T('Autre projet', 'Other project')}
+        <select data-role="changer">${autres
+          .map((r) => `<option value="${ech(r.id)}"${r.id === projet.id ? ' selected' : ''}>${ech(r.nom)}</option>`)
+          .join('')}</select></label>`
+          : ''
+      }</div>
     <div class="pj-actions">
       <button data-action="renommer-projet">${T('Renommer le projet', 'Rename project')}</button>
       <button data-action="exporter">${T('Exporter (fichier)', 'Export (file)')}</button>
@@ -430,6 +465,7 @@ function brancher(v) {
   });
   v.addEventListener('change', (ev) => {
     if (ev.target.matches('input[data-action="importer"]') && ev.target.files?.[0]) importer(ev.target.files[0]);
+    if (ev.target.matches('select[data-role="changer"]')) location.hash = `#projets/${ev.target.value}`;
   });
 }
 
