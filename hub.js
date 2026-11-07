@@ -761,7 +761,10 @@ const FISS_HTML = () => `
    Les apps qui savent ouvrir une feuille de projet : cle de OUTILS_EXTERNES
    → identifiant de l'app (nom de son depot, celui que l'app ecrit).
    ========================================================= */
-const APPS_FEUILLES = { mur:"mur-en-l" };
+const APPS_FEUILLES = {
+  combinaisons:"combinaisons-actions", equilibre:"equilibre-statique", interface:"cisaillement-interface",
+  semelles:"fondations-superficielles", talus:"stabilite-talus", mur:"mur-en-l",
+};
 // Calculees a la demande (la page des projets les lit), pas au chargement.
 window.aedAppsFeuilles = () => Object.entries(APPS_FEUILLES).map(([cle, app])=>{
   const o = GROUPES.flatMap(g=>g.outils).find(x=>x.href===adresse(cle));
