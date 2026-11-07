@@ -293,3 +293,55 @@
   color:var(--accent);text-decoration:none;border:1px solid var(--bordure);
   border-radius:var(--rayon-petit);padding:3px 7px}
 .topbar .barre-langue:hover{background:var(--accent-doux)}
+
+/* ---------- Mes projets (etape 9.5) ---------- */
+.pj-actions{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 14px}
+.pj-actions.pj-serre{margin:6px 0 8px}
+.pj-actions button,.pj-bouton,.pj-ajout button,.pj-dialogue button{font:inherit;font-size:.82rem;
+  padding:5px 11px;border:1px solid var(--bordure);border-radius:var(--rayon-petit);
+  background:var(--surface-appui);color:var(--texte);cursor:pointer}
+.pj-actions button:hover,.pj-bouton:hover,.pj-ajout button:hover{background:var(--accent-doux)}
+button.pj-principal,.pj-dialogue button.pj-principal{background:var(--accent);border-color:var(--accent);color:#fff}
+button.pj-principal:hover{background:var(--accent);filter:brightness(1.1)}
+button.pj-danger{color:var(--refus)}
+.pj-vide,.pj-note{color:var(--texte-doux);margin:8px 0}
+.pj-note{font-size:.82rem}
+.pj-liste{list-style:none;margin:0;padding:0;border:1px solid var(--bordure);border-radius:var(--rayon);background:var(--surface)}
+.pj-liste li+li{border-top:1px solid var(--bordure-douce)}
+.pj-liste a{display:flex;justify-content:space-between;gap:12px;padding:10px 14px;color:var(--texte);text-decoration:none}
+.pj-liste a:hover{background:var(--accent-doux)}
+.pj-nom{font-weight:600}
+.pj-date{color:var(--texte-faible);font-size:.82rem}
+.pj-cadre{display:grid;grid-template-columns:minmax(220px,320px) 1fr;gap:14px;align-items:start}
+@media (max-width:760px){.pj-cadre{grid-template-columns:1fr}}
+.pj-arbre,.pj-detail{border:1px solid var(--bordure);border-radius:var(--rayon);background:var(--surface);padding:10px 12px;min-width:0}
+.pj-arbre ul{list-style:none;margin:0;padding:0 0 0 14px}
+.pj-arbre>ul{padding-left:0}
+.pj-noeud{display:flex;align-items:baseline;gap:6px;width:100%;text-align:left;font:inherit;
+  padding:3px 6px;border:0;border-radius:var(--rayon-petit);background:none;color:var(--texte);cursor:pointer}
+.pj-noeud:hover{background:var(--accent-doux)}
+.pj-noeud.pj-sel{background:var(--accent-doux);outline:1px solid var(--accent)}
+.pj-noeud.pj-coupe{opacity:.5;font-style:italic}
+.pj-racine{font-weight:600}
+.pj-dossier{font-weight:600}
+.pj-ic{color:var(--texte-faible);width:1em;flex:none}
+.pj-calcul{color:var(--texte-doux);font-size:.88rem}
+.pj-compte{margin-left:auto;color:var(--texte-faible);font-size:.76rem;white-space:nowrap}
+.pj-detail h2{margin:2px 0 4px;font-size:1.15rem}
+.pj-calc{border-top:1px solid var(--bordure-douce);padding-top:10px;margin-top:10px}
+.pj-calc h3{margin:0 0 6px;font-size:1rem}
+.pj-calc h3 small{color:var(--texte-faible);font-weight:400}
+.pj-feuilles{width:100%;border-collapse:collapse;font-family:var(--sans);font-size:.86rem}
+.pj-feuilles th,.pj-feuilles td{padding:5px 8px;border-bottom:1px solid var(--bordure-douce);text-align:left}
+.pj-feuilles th{background:var(--surface-appui);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase}
+.pj-statut{font-size:.74rem;padding:1px 7px;border-radius:var(--rayon-petit);white-space:nowrap}
+.pj-statut.pj-justifier{background:var(--ok-fond);color:var(--ok)}
+.pj-statut.pj-etude{background:var(--surface-appui);color:var(--texte-doux)}
+.pj-ajout{display:flex;flex-wrap:wrap;gap:8px;align-items:end;margin-top:14px}
+.pj-ajout label{display:flex;flex-direction:column;gap:3px;font-size:.82rem;color:var(--texte-doux)}
+.pj-ajout select{font:inherit;padding:4px 6px;border:1px solid var(--bordure);border-radius:var(--rayon-petit);background:var(--surface)}
+.pj-dialogue{border:1px solid var(--bordure);border-radius:var(--rayon);padding:16px 18px;max-width:min(440px,calc(100vw - 32px));background:var(--surface);color:var(--texte)}
+.pj-dialogue::backdrop{background:rgba(26,26,26,.25)}
+.pj-q{display:flex;flex-direction:column;gap:6px;margin:0 0 12px}
+.pj-q input{font:inherit;padding:6px 8px;border:1px solid var(--bordure);border-radius:var(--rayon-petit)}
+.pj-boutons{display:flex;justify-content:flex-end;gap:8px}

@@ -24,6 +24,7 @@ const dec = s => (EN ? String(s) : String(s).replace(".", ","));
 const PAGES = {
   accueil:     { title:T("Accueil","Home"),                                            render:v=>renderTableau(v,null) },
   fissuration: { title:T("Armature minimale de fissuration","Minimum crack-control reinforcement"), render:renderFissuration },
+  projets:     { title:T("Mes projets","My projects"),                                 render:renderProjets },
 };
 
 /*
@@ -117,7 +118,8 @@ const enFrancais = o => (EN && o.fr ? ` <small>(French only)</small>` : "");
 
 function buildMenu(){
   const m=$("menu");
-  let h=`<a class="item" href="#accueil" data-route="accueil">${T("Accueil","Home")}</a>`;
+  let h=`<a class="item" href="#accueil" data-route="accueil">${T("Accueil","Home")}</a>`
+    + `<a class="item" href="#projets" data-route="projets">${T("Mes projets","My projects")}</a>`;
   GROUPES.forEach(g=>{
     h+=`<div class="menu-group"><a class="menu-group-lbl" href="#${g.id}" data-route="${g.id}">${g.num} · ${g.titre}</a></div>`;
     g.outils.forEach(o=>{
@@ -155,11 +157,12 @@ function lienDeLangue(){
 }
 
 function router(){
-  const route = (location.hash.replace("#","")||"accueil");
+  // `#projets/<id>` : la route, puis son argument.
+  const [route, ...reste] = (location.hash.replace("#","")||"accueil").split("/");
   const page = PAGES[route] || PAGES.accueil;
   document.title = page.title + " · Aedificium";
   const view=$("view"); view.innerHTML="";
-  page.render(view);
+  page.render(view, reste.join("/"));
   setActive(PAGES[route]?route:"accueil");
   lienDeLangue();
   toggleNav(false);
@@ -750,5 +753,27 @@ const FISS_HTML = () => `
 
 
 /* ---- démarrage ---- */
+/* =========================================================
+   PROJETS (etape 9.5)
+   La page vit dans `projets/page.js`, un module : il se charge APRES ce
+   script. En attendant, la page affiche une ligne d'attente, et le module
+   relance le routeur quand il est pret.
+   Les apps qui savent ouvrir une feuille de projet : cle de OUTILS_EXTERNES
+   → identifiant de l'app (nom de son depot, celui que l'app ecrit).
+   ========================================================= */
+const APPS_FEUILLES = { mur:"mur-en-l" };
+// Calculees a la demande (la page des projets les lit), pas au chargement.
+window.aedAppsFeuilles = () => Object.entries(APPS_FEUILLES).map(([cle, app])=>{
+  const o = GROUPES.flatMap(g=>g.outils).find(x=>x.href===adresse(cle));
+  // Adresse relative au hub : meme origine sur henri421.github.io comme au banc local.
+  const local = new URL(`${RACINE}../${app}/${EN && AVEC_ANGLAIS.has(cle) ? "en/" : ""}`, location.href).href;
+  return { app, nom: o ? o.nom : app, adresse: local };
+});
+function renderProjets(view, id){
+  if(window.AedProjets){ window.AedProjets.renderProjets(view, id); return; }
+  view.innerHTML = `<p class="pj-vide">${T("Chargement des projets…","Loading projects…")}</p>`;
+}
+window.addEventListener("aed-projets-pret", ()=>{ if(location.hash.startsWith("#projets")) router(); });
+
 buildMenu();
 router();
