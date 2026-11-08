@@ -24,6 +24,9 @@ export const FORMAT_PROJET = 'aedificium-projet/1';
 
                                                   
 
+/** `alerte` : ni conforme ni refuse (incomplet, armatures requises...). */
+                                                 
+
                           
              
               
@@ -35,6 +38,8 @@ export const FORMAT_PROJET = 'aedificium-projet/1';
                 
                                                                                        
                                    
+                                                                                 
+                                                     
  
 
                          
@@ -574,4 +579,35 @@ export function importerProjet(contenu        )         {
   if (!texte(p.cree)) p.cree = maintenant();
   if (!texte(p.modifie)) p.modifie = p.cree;
   return p;
+}
+
+/** Empreinte courte des donnees d'une feuille : sert a reperer un verdict perime. */
+function empreinte(c        , id        )         {
+  let h = 5381;
+  for (const car of JSON.stringify(donneesDeFeuille(c, id))) h = (h * 33 + car.charCodeAt(0)) >>> 0;
+  return h.toString(36);
+}
+
+/** Enregistre le verdict que l'app vient de calculer ; `null` l'efface. */
+export function definirVerdict(c        , id        , etat                    )       {
+  const f = trouverFeuille(c, id);
+  if (etat === null) delete f.verdict;
+  else f.verdict = { etat, empreinte: empreinte(c, id) };
+}
+
+/**
+ * Verdict d'une feuille. `perime` : ses donnees ont change depuis le calcul,
+ * typiquement parce que la feuille d'origine a ete modifiee ; il faut rouvrir
+ * la feuille pour le recalculer. Un verdict perime n'est jamais montre comme valable.
+ */
+export function verdictDeFeuille(c        , id        )                                {
+  const f = trouverFeuille(c, id);
+  if (!f.verdict) return null;
+  return f.verdict.empreinte === empreinte(c, id) ? f.verdict.etat : 'perime';
+}
+
+/** Pire verdict des feuilles a justifier d'un calcul (les etudes ne comptent pas). */
+export function verdictDuCalcul(c        )                                {
+  const vus = c.feuilles.filter((f) => f.statut === 'justifier').map((f) => verdictDeFeuille(c, f.id));
+  return (['ko', 'perime', 'alerte', 'ok']         ).find((v) => vus.includes(v)) ?? null;
 }

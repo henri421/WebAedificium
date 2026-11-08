@@ -350,3 +350,5 @@ button.pj-danger{color:var(--refus)}
 .page-h:has(.pj-changer){display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
 .pj-changer{display:flex;flex-direction:column;gap:3px;font-size:.78rem;color:var(--texte-faible)}
 .pj-changer select{font:inherit;font-size:.86rem;padding:4px 6px;border:1px solid var(--bordure);border-radius:var(--rayon-petit);background:var(--surface);color:var(--texte);max-width:260px}
+.pj-pastille{display:inline-block;min-width:1.2em;margin-right:4px;font-weight:700;text-align:center}
+.pj-v-ok{color:#2e7d4f}.pj-v-alerte{color:#b26a00}.pj-v-ko{color:#b3261e}.pj-v-perime{color:#6a6862}

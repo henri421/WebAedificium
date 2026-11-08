@@ -208,13 +208,24 @@ function arbre(liste) {
       const calculs = n.calculs
         .map(
           (c) => `<li><button class="pj-noeud pj-calcul${c.id === selection ? ' pj-sel' : ''}" data-sel="${ech(c.id)}">
-            <span class="pj-ic" aria-hidden="true">${ICONES.calcul}</span>${ech(nomApp(c))}
+            <span class="pj-ic" aria-hidden="true">${ICONES.calcul}</span>${pastille(P.verdictDuCalcul(c))}${ech(nomApp(c))}
             <span class="pj-compte">${c.feuilles.length} ${c.feuilles.length > 1 ? T('feuilles', 'sheets') : T('feuille', 'sheet')}</span></button></li>`
         )
         .join('');
       return `<li>${ligne}${calculs ? `<ul>${calculs}</ul>` : ''}</li>`;
     })
     .join('')}</ul>`;
+}
+
+function pastille(v) {
+  if (v === null) return '';
+  const titre = {
+    ok: T('Vérifié', 'Verified'),
+    alerte: T('À examiner', 'To review'),
+    ko: T('Non vérifié', 'Not verified'),
+    perime: T('À recalculer : données modifiées', 'To recompute: data changed'),
+  }[v];
+  return `<span class="pj-pastille pj-v-${v}" title="${titre}" aria-label="${titre}">${{ ok: '✓', alerte: '!', ko: '✗', perime: '↻' }[v]}</span>`;
 }
 
 function lienFeuille(c, f) {
@@ -231,7 +242,7 @@ function blocCalcul(c, avecActions) {
       const origine = f.origine ? c.feuilles.find((x) => x.id === f.origine)?.nom || '?' : '';
       const propres = Object.keys(f.surcharges).length;
       const lien = lienFeuille(c, f);
-      return `<tr><td>${ech(f.nom)}</td>
+      return `<tr><td>${pastille(P.verdictDeFeuille(c, f.id))}${ech(f.nom)}</td>
         <td><span class="pj-statut pj-${f.statut}">${f.statut === 'justifier' ? T('à justifier', 'to justify') : T('étude', 'study')}</span></td>
         <td>${origine ? `${T("d'après", 'from')} ${ech(origine)} · ${propres} ${T('champ(s) propre(s)', 'own field(s)')}` : T('complète', 'complete')}</td>
         <td>${lien ? `<a href="${ech(lien)}" target="_blank" rel="noopener">${T('Ouvrir', 'Open')} ↗</a>` : ''}</td></tr>`;
