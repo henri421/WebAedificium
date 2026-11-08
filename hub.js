@@ -766,6 +766,8 @@ const FISS_HTML = () => `
 const APPS_FEUILLES = {
   combinaisons:"combinaisons-actions", equilibre:"equilibre-statique", interface:"cisaillement-interface",
   semelles:"fondations-superficielles", talus:"stabilite-talus", mur:"mur-en-l", stm:"MBT",
+  sectionUls:"section-uls", poinconnement:"poinconnement", assemblages:"assemblages-ec3", poutres:"beam",
+  climat:"charges-climatiques", ancrages:"dispositions-constructives", colonne:"colonne_ec2", sectionsEc3:"sections-ec3",
 };
 // Calculees a la demande (la page des projets les lit), pas au chargement.
 window.aedAppsFeuilles = () => Object.entries(APPS_FEUILLES).map(([cle, app])=>{
