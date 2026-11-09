@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="72" fill="#f7f7f6"/>
+  <polygon points="40,176 472,176 472,296 40,296" fill="#efe6d6"/>
+  <polygon points="40,296 472,296 472,472 40,472" fill="#e3e0da"/>
+  <line x1="40" y1="176" x2="472" y2="176" stroke="#1a1a1a" stroke-width="10"/>
+  <polygon points="104,96 408,96 408,152 104,152" fill="#e7eaee" stroke="#1a1a1a" stroke-width="10"/>
+  <polygon points="140,152 188,152 188,432 140,432" fill="#e7eaee" stroke="#2f5d8a" stroke-width="10"/>
+  <polygon points="232,152 280,152 280,432 232,432" fill="#e7eaee" stroke="#2f5d8a" stroke-width="10"/>
+  <polygon points="324,152 372,152 372,432 324,432" fill="#e7eaee" stroke="#2f5d8a" stroke-width="10"/>
+  <line x1="256" y1="24" x2="256" y2="80" stroke="#a8442a" stroke-width="14" stroke-linecap="round"/>
+  <polyline points="232,58 256,84 280,58" fill="none" stroke="#a8442a" stroke-width="14" stroke-linecap="round"/>
+</svg>
