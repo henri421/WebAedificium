@@ -12,6 +12,7 @@
 
 import * as P from './projets.js';
 import { depotParDefaut } from './projets-stockage.js';
+import { noteDeProjetHtml } from './note.js';
 
 const EN = document.documentElement.lang === 'en';
 const T = (fr, en) => (EN ? en : fr);
@@ -323,6 +324,7 @@ function dessinerProjet() {
       }</div>
     <div class="pj-actions">
       <button data-action="renommer-projet">${T('Renommer le projet', 'Rename project')}</button>
+      <button data-action="note">${T('Note de projet', 'Project note')}</button>
       <button data-action="exporter">${T('Exporter (fichier)', 'Export (file)')}</button>
       <button data-action="supprimer-projet" class="pj-danger">${T('Supprimer le projet', 'Delete project')}</button>
     </div>
@@ -364,6 +366,11 @@ async function agir(action, cible) {
       const nom = await demander(T('Nom du projet', 'Project name'), projet.nom);
       if (nom) await modifier((p) => (p.nom = nom));
       return;
+    }
+    case 'note': {
+      const html = noteDeProjetHtml(projet, T, nomApp, new Date().toLocaleDateString(document.documentElement.lang || 'fr'));
+      window.open(URL.createObjectURL(new Blob([html], { type: 'text/html;charset=utf-8' })), '_blank');
+      break;
     }
     case 'exporter':
       telecharger(nomDeFichier(projet), P.exporterProjet(projet));
