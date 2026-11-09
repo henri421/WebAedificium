@@ -1,5 +1,5 @@
 // GENERE depuis aedificium-ui/src/projets.ts par _banc-local/copier-projets.mjs.
-// Ne pas modifier a la main : corriger la source puis relancer la copie.
+// Ne pas modifier a la main.
 /**
  * Projets de la suite : arborescence, feuilles de calcul et heritage.
  *
