@@ -128,7 +128,7 @@ test('outils publies : version anglaise quand elle existe, mention sinon', () =>
   const html = affichage(m);
   assert.match(html, /https:\/\/henri421\.github\.io\/section-uls\/en\//);
   assert.match(html, /https:\/\/henri421\.github\.io\/beam\/en\//);
-  assert.match(html, /https:\/\/henri421\.github\.io\/Fondbis\/"[^>]*>[\s\S]*?French only/);
+  assert.match(html, /https:\/\/henri421\.github\.io\/schema-statique\/"[^>]*>[\s\S]*?French only/);
   assert.match(html, /src="\.\.\/icones\/sectionUls\.svg"/);
 });
 
