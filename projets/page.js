@@ -13,6 +13,7 @@
 import * as P from './projets.js';
 import { depotParDefaut } from './projets-stockage.js';
 import { noteDeProjetHtml } from './note.js';
+import { adresseSure } from './adresse.js';
 
 const EN = document.documentElement.lang === 'en';
 const T = (fr, en) => (EN ? en : fr);
@@ -231,7 +232,7 @@ function pastille(v) {
 
 function lienFeuille(c, f) {
   // L'adresse connue du hub d'abord (langue et serveur courants), celle du calcul sinon.
-  const base = apps().find((a) => a.app === c.app)?.adresse || c.adresse || '';
+  const base = apps().find((a) => a.app === c.app)?.adresse || adresseSure(c.adresse, location.origin);
   if (!base) return '';
   const q = new URLSearchParams({ projet: projet.id, calcul: c.id, feuille: f.id });
   return `${base}?${q}`;
