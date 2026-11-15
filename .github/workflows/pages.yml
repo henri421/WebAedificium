@@ -28,6 +28,10 @@ jobs:
           node-version: 22
       - name: Tests du hub
         run: node --test "tests/*.test.js"
+      - name: Copies d'aedificium-ui a jour (audit R12)
+        run: |
+          git clone --depth 1 https://github.com/henri421/aedificium-ui "$RUNNER_TEMP/aedificium-ui"
+          node "$RUNNER_TEMP/aedificium-ui/scripts/copier-projets.mjs" --verif projets projets projets-stockage
 
   publication:
     needs: tests
