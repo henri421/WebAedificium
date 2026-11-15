@@ -37,3 +37,19 @@ test('texte : indices et entites convertis, barres echappees', async () => {
   const R = await charger();
   assert.equal(R.texte('K<sub>a</sub> &sect;6.2 a|b'), 'K_a §6.2 a\\|b');
 });
+
+test('D2 : la liste de diffusion de CONVENTIONS.md couvre tous les outils publies du hub', async () => {
+  const R = await charger();
+  const { DEPOTS } = await import(pathToFileURL(path.join(__dirname, '..', 'scripts', 'conventions.mjs')).href);
+  const depots = new Set(Object.values(DEPOTS));
+  for (const g of R.groupes()) {
+    for (const o of g.outils) {
+      if (!o.href || o.route) continue;
+      const depot = new URL(o.href).pathname.split('/').filter(Boolean)[0];
+      assert.ok(depots.has(depot), `${depot} absent de scripts/conventions.mjs`);
+    }
+  }
+  const conv = fs.readFileSync(path.join(__dirname, '..', 'CONVENTIONS.md'), 'utf8');
+  assert.match(conv, /kPa/);
+  assert.doesNotMatch(conv, /`assemblages-ec3`,\s*`poinconnement`/);
+});

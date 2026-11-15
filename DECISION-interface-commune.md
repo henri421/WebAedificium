@@ -60,3 +60,26 @@ Dépôt [`henri421/aedificium-ui`](https://github.com/henri421/aedificium-ui),
 725) passent inchangées. Effet de bord voulu : `section-uls` affiche désormais
 un tiret au lieu de « NaN » pour une valeur absente. `assemblages-ec3` vérifie
 par un test que le `:root` de sa feuille de style concorde avec `JETONS`.
+
+## Révision — 2026-11-16 (audit du 10/11/2026, I8)
+
+La décision du 2026-10-01 est **dépassée**, et c'est voulu : `aedificium-ui`
+compte environ 2 800 lignes et porte, en plus des primitives, la note de calcul
+commune (`note.ts`), le moteur de projets et son stockage IndexedDB
+(`projets.ts`, `projets-stockage.ts`), la barre des feuilles de calcul, l'éditeur
+de tableaux, la notation des indices, la langue et l'avertissement de 2ᵉ
+génération. `MBT`, dit « non concerné » en octobre, l'utilise désormais.
+
+Ce qui a déclenché la révision est le critère écrit plus haut : la note de
+calcul et les projets sont des besoins **communs à tous les outils**, et les
+dupliquer aurait produit l'écart de comportement que la règle voulait éviter.
+
+Règles qui restent :
+
+- `aedificium-ui` ne porte **aucun calcul normatif** ; les coefficients et les
+  profils nationaux restent dans les noyaux métier.
+- Distribution inchangée : dépendance Git épinglée sur une étiquette, en
+  `devDependencies`. Les copies JavaScript du moteur de projets dans le hub,
+  `regard` et `schema-statique` sont générées depuis les sources TypeScript.
+- Tout ajout est testé dans `aedificium-ui` et publié par une nouvelle
+  étiquette ; la vérification hebdomadaire du hub signale les outils en retard.
