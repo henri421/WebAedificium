@@ -174,7 +174,13 @@ function armatureMinimaleBridage(e) {
   //
   // `fcteffImpose` reste accepte pour compatibilite avec le mode manuel de
   // la page ; il vaut exactement `impose.fcteff`.
-  const fcteffCalcule = scenario === 'tardif' ? Math.max(fctm, 3.0) : e.kzt * fctm;
+  //
+  // Le plancher de 3,0 MPa est une regle de l'annexe nationale allemande :
+  // il ne s'applique qu'avec la methode 'din'. Le texte EN 1992-1-1 (7.3.2(2))
+  // prend f_ct,eff = f_ctm (audit du 10/11/2026, E2).
+  const fcteffCalcule = scenario === 'tardif'
+    ? (methode === 'din' ? Math.max(fctm, 3.0) : fctm)
+    : e.kzt * fctm;
   const fcteff = retenu(
     'fcteff',
     e.fcteffImpose !== undefined && e.fcteffImpose !== null && !Number.isNaN(e.fcteffImpose)
@@ -264,11 +270,42 @@ function armatureMinimaleBridage(e) {
   };
 }
 
+/**
+ * Espacement maximal des fissures (EN 1992-1-1 7.3.4(3)).
+ *
+ * L'equation 7.11 ne vaut que si l'espacement des barres adherentes reste
+ * au plus egal a 5(c + phi/2). Au-dela, la norme renvoie au majorant
+ * s_r,max = 1,3 (h - x) (equation 7.14), et l'outil le signale. `x` est la
+ * hauteur comprimee ; 0 par defaut (traction, ou majorant en flexion).
+ *
+ * `asprov` est l'aire TOTALE des `nappes` faces, en barres de diametre `phi`
+ * reparties sur la largeur `b` (audit du 10/11/2026, E3).
+ */
+function espacementFissures(e) {
+  const aireBarre = (Math.PI * e.phi * e.phi) / 4;
+  const espacement = e.b / (e.asprov / e.nappes / aireBarre);
+  const limite = 5 * (e.c + e.phi / 2);
+  if (espacement <= limite) {
+    return {
+      espacement, limite, formule: '7.11', avertissement: null,
+      srmax: e.k3 * e.c + (e.k1 * e.k2 * e.k4 * e.phi) / e.rhoEff,
+    };
+  }
+  const x = e.x === undefined ? 0 : e.x;
+  return {
+    espacement, limite, formule: '7.14',
+    srmax: 1.3 * (e.h - x),
+    avertissement:
+      'Espacement des barres ' + Math.round(espacement) + ' mm > 5(c + φ/2) = ' + Math.round(limite) +
+      ' mm : s_r,max = 1,3 (h − x) (éq. 7.14), x = ' + Math.round(x) + ' mm.',
+  };
+}
+
 /*
  * Garde d'export : ignore par le navigateur (qui charge ce fichier en script
  * classique), utilise par Node pour les tests. Aucun build, aucune
  * dependance.
  */
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { fctmDepuisFck, facteurK, hauteurEfficace, contrainteAcier, armatureMinimaleBridage };
+  module.exports = { fctmDepuisFck, facteurK, hauteurEfficace, contrainteAcier, armatureMinimaleBridage, espacementFissures };
 }

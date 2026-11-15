@@ -14,6 +14,7 @@ import * as P from './projets.js';
 import { depotParDefaut } from './projets-stockage.js';
 import { noteDeProjetHtml } from './note.js';
 import { adresseSure } from './adresse.js';
+import { dernierExport, noterExport, aExporter, exporterTous, importerFichier } from './sauvegarde.js';
 
 const EN = document.documentElement.lang === 'en';
 const T = (fr, en) => (EN ? en : fr);
@@ -136,6 +137,13 @@ function telecharger(nom, texte) {
   setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 }
 
+/** Date du dernier export, ou « jamais exporté », avec l'invitation si le projet a change depuis. */
+function etatExport(id, modifie) {
+  const d = dernierExport(id);
+  const texte = d === null ? T('jamais exporté', 'never exported') : `${T('exporté le', 'exported')} ${date(d)}`;
+  return { texte, rappel: aExporter(modifie, d) };
+}
+
 const nomDeFichier = (p) => `${p.nom.replace(/[^\p{L}\p{N}_-]+/gu, '-').replace(/^-|-$/g, '') || 'projet'}.aedificium.json`;
 
 /* ------------------------------------------------------------------ */
@@ -179,6 +187,7 @@ async function dessinerListe() {
       )}</div></div></div>
     <div class="pj-actions">
       <button class="pj-principal" data-action="nouveau">${T('Nouveau projet', 'New project')}</button>
+      ${liste.length ? `<button data-action="exporter-tous">${T('Exporter tous les projets', 'Export all projects')}</button>` : ''}
       <label class="pj-bouton">${T('Importer un fichier…', 'Import a file…')}<input type="file" accept=".json,application/json" data-action="importer" hidden></label>
     </div>
     ${
@@ -187,7 +196,7 @@ async function dessinerListe() {
         : `<ul class="pj-liste">${liste
             .map(
               (r) => `<li><a href="#projets/${ech(r.id)}"><span class="pj-ligne"><span class="pj-nom">${ech(r.nom)}</span>${resumeDe(r.id)}</span>
-                <span class="pj-date">${T('modifié le', 'modified')} ${ech(date(r.modifie))}</span></a></li>`
+                <span class="pj-date">${T('modifié le', 'modified')} ${ech(date(r.modifie))} · <span class="${etatExport(r.id, r.modifie).rappel ? 'pj-a-exporter' : ''}">${ech(etatExport(r.id, r.modifie).texte)}</span></span></a></li>`
             )
             .join('')}</ul>`
     }`;
@@ -314,7 +323,7 @@ function dessinerProjet() {
   vue.innerHTML = `
     <div class="page-h"><div><div class="eyebrow"><a href="#projets">${T('Mes projets', 'My projects')}</a> · ${T('Projet', 'Project')}</div>
       <h1>${ech(projet.nom)}</h1>
-      <div class="sub">${T('Modifié le', 'Modified')} ${ech(date(projet.modifie))}</div></div>
+      <div class="sub">${T('Modifié le', 'Modified')} ${ech(date(projet.modifie))} · ${ech(etatExport(projet.id, projet.modifie).texte)}</div></div>
       ${
         autres.length > 1
           ? `<label class="pj-changer">${T('Autre projet', 'Other project')}
@@ -329,6 +338,11 @@ function dessinerProjet() {
       <button data-action="exporter">${T('Exporter (fichier)', 'Export (file)')}</button>
       <button data-action="supprimer-projet" class="pj-danger">${T('Supprimer le projet', 'Delete project')}</button>
     </div>
+    ${etatExport(projet.id, projet.modifie).rappel ? `<p class="pj-rappel">${
+      dernierExport(projet.id) === null
+        ? T('Ce projet n’a jamais été exporté.', 'This project has never been exported.')
+        : T('Ce projet a changé depuis son dernier export.', 'This project has changed since its last export.')
+    } ${T('Il ne vit que dans ce navigateur : exportez-le pour en garder une copie.', 'It only lives in this browser: export it to keep a copy.')}</p>` : ''}
     <div class="pj-cadre">
       <div class="pj-arbre">
         <div class="panel-h">${T('Arborescence', 'Tree')}</div>
@@ -375,7 +389,25 @@ async function agir(action, cible) {
     }
     case 'exporter':
       telecharger(nomDeFichier(projet), P.exporterProjet(projet));
+      noterExport(projet.id, new Date().toISOString());
+      dessiner();
       return;
+    case 'exporter-tous': {
+      try {
+        const tous = [];
+        for (const r of await depot.lister()) {
+          const p = await depot.lire(r.id);
+          if (p) tous.push(p);
+        }
+        const maintenant = new Date().toISOString();
+        telecharger(`projets-aedificium-${maintenant.slice(0, 10)}.json`, exporterTous(tous, maintenant));
+        for (const p of tous) noterExport(p.id, maintenant);
+        dessiner();
+      } catch (e) {
+        signaler(messageDErreur(e));
+      }
+      return;
+    }
     case 'supprimer-projet':
       if (
         await confirmer(
@@ -451,7 +483,24 @@ async function agir(action, cible) {
 
 async function importer(fichier) {
   try {
-    const p = P.importerProjet(await fichier.text());
+    const lus = importerFichier(await fichier.text());
+    if (lus.length > 1) {
+      const deja = [];
+      for (const p of lus) if (await depot.lire(p.id)) deja.push(p.nom);
+      if (
+        deja.length &&
+        !(await confirmer(
+          T(`${deja.length} projet(s) existent déjà dans ce navigateur (${ech(deja.join(', '))}). Les remplacer par ceux du fichier ?`,
+            `${deja.length} project(s) already exist in this browser (${ech(deja.join(', '))}). Replace them with the file's?`),
+          T('Remplacer', 'Replace')
+        ))
+      ) return;
+      for (const p of lus) await depot.ecrire(p);
+      location.hash = '#projets';
+      dessiner();
+      return;
+    }
+    const p = lus[0];
     if (await depot.lire(p.id)) {
       const remplacer = await confirmer(
         T(`Le projet « ${ech(p.nom)} » existe déjà dans ce navigateur. Le remplacer par le fichier ?`,

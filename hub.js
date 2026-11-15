@@ -231,7 +231,7 @@ const F_IDS=["fck","s","t","mode","fcteff","kzt","methode","convK","fyk","sigsMo
   // Champs de FORCAGE. Vides par defaut : un champ vide veut dire « calcule ».
   "impFctm","impFcteff","impD1","impHcef","impK","impKc","impAct","impAceff","impSigs"];
 
-const F_DEF={fck:30,s:"0.25",t:3,mode:"impose",fcteff:2.9,kzt:0.8,methode:"din",convK:"ec2",fyk:500,sigsMode:"fyk",sigsVal:320,phistar:13.54,h:1000,b:1000,c:50,phi:12,cas:"traction",wk:0.3,asprov:8000,kt:0.4,k1:0.8,k2:1.0,k3:3.4,k4:0.425,
+const F_DEF={fck:30,s:"0.25",t:3,mode:"impose",fcteff:2.9,kzt:0.8,methode:"din",convK:"ec2",fyk:500,sigsMode:"phistar",sigsVal:320,phistar:13.54,h:1000,b:1000,c:50,phi:12,cas:"traction",wk:0.3,asprov:8000,kt:0.4,k1:0.8,k2:1.0,k3:3.4,k4:0.425,
   // ⚠ CHAINES VIDES et non zeros : un « 0 » dans un champ de forcage serait
   // une valeur imposee a zero, ce qui annulerait l armature en silence.
   impFctm:"",impFcteff:"",impD1:"",impHcef:"",impK:"",impKc:"",impAct:"",impAceff:"",impSigs:""};
@@ -249,6 +249,8 @@ const AVERT_EN = [
     "The axis distance d1 = $1 mm reaches half the thickness (h/2 = $2 mm): the geometry is inconsistent, and both hc,ef and A_ct depend on it."],
   [/^La zone efficace des (\d+) faces \((\d+) mm²\) depasse la section de beton \((\d+) mm²\) : hc,ef impose au-dela de h\/2\. Le calcul est mene tel quel\.$/,
     "The effective area of the $1 faces ($2 mm²) exceeds the concrete section ($3 mm²): hc,ef imposed beyond h/2. The calculation is carried out as it stands."],
+  [/^Espacement des barres (\d+) mm > 5\(c \+ φ\/2\) = (\d+) mm : s_r,max = 1,3 \(h − x\) \(éq\. 7\.14\), x = (\d+) mm\.$/,
+    "Bar spacing $1 mm > 5(c + φ/2) = $2 mm: s_r,max = 1.3 (h − x) (expr. 7.14), x = $3 mm."],
 ];
 const avertissement = a => {
   if(!EN) return a;
@@ -346,7 +348,11 @@ function fissCompute(v){
   r.Ecm=22000*Math.pow(r.fcm/10,0.3);
   r.ae=200000/r.Ecm;
   r.eps=Math.max((r.sigsWk-v.kt*r.fcteff/r.rhoEff*(1+r.ae*r.rhoEff))/200000, 0.6*r.sigsWk/200000);
-  r.srmax=v.k3*v.c+v.k1*v.k2*v.k4*v.phi/r.rhoEff;
+  // s_r,max : equation 7.11, ou 7.14 quand les barres sont espacees de plus
+  // de 5(c + phi/2) (audit du 10/11/2026, E3). Le cas est signale.
+  r.esp=espacementFissures({c:v.c,phi:v.phi,b:v.b,h:v.h,asprov:v.asprov,nappes:am.nappes,rhoEff:r.rhoEff,k1:v.k1,k2:v.k2,k3:v.k3,k4:v.k4});
+  r.srmax=r.esp.srmax;
+  if(r.esp.avertissement) am.avertissements.push(r.esp.avertissement);
   r.wk=r.srmax*r.eps;
   r.ok=r.wk<=v.wk;
   return r;
@@ -470,7 +476,7 @@ function fissSteps(v,r){
   S.push(row("f_ctm",v.fck<=50?`${dec("0.30")} · ${fmt0(v.fck)}^(2/3)`:`${dec("2.12")} · ln(1 + ${fmt(r.fcm,0)}/10)`,fmt(r.fctm,2)+" MPa"));
   S.push(row("β_cc(t)","exp{ "+v.s+" · [1 − √(28/"+fmt0(v.t)+")] }",fmt(r.bcc,3)));
   S.push(row("f_ctm(t)",(v.t<28?"β_cc":"β_cc^(2/3)")+" · f_ctm",fmt(r.fctmt,2)+" MPa"));
-  S.push(row("f_ct,eff",{impose:T("valeur imposée","imposed value"),auto:"= f_ctm(t)",kzt:`k_zt · f_ctm = ${fmt(v.kzt,2)} · ${fmt(r.fctm,2)}`,tardif:T("max(f_ctm ; 3,0) — bridage tardif","max(f_ctm; 3.0) — late-age restraint")}[v.mode]+marq("fcteff"),fmt(r.fcteff,2)+" MPa"));
+  S.push(row("f_ct,eff",{impose:T("valeur imposée","imposed value"),auto:"= f_ctm(t)",kzt:`k_zt · f_ctm = ${fmt(v.kzt,2)} · ${fmt(r.fctm,2)}`,tardif:v.methode==="din"?T("max(f_ctm ; 3,0) — bridage tardif, annexe allemande","max(f_ctm; 3.0) — late-age restraint, German annex"):T("= f_ctm — bridage tardif, texte EN (7.3.2(2))","= f_ctm — late-age restraint, EN text (7.3.2(2))")}[v.mode]+marq("fcteff"),fmt(r.fcteff,2)+" MPa"));
   S.push(hd(T("B · Coefficients de l'équation 7.1","B · Coefficients of expression (7.1)")));
   S.push(row("k",(v.convK==="de"?T("annexe allemande · ","German Annex · "):"EC2 · ")+(v.h<=300?"h ≤ 300":(v.h>=800?"h ≥ 800":T("interpolation","interpolation")))+marq("k"),fmt(r.k,3)));
   S.push(row("k_c",(v.cas==="traction"?T("traction pure","pure tension"):T("flexion pure","pure bending"))+marq("kc"),fmt(r.kc,2)));
@@ -498,7 +504,8 @@ function fissSteps(v,r){
   S.push(row("σ_s (wk)","N_r / A_s,prov",fmt0(r.sigsWk)+" MPa"));
   S.push(row("ρ_p,eff","A_s,prov / A_c,eff",fmt(r.rhoEff,4)));
   S.push(row("ε_sm−ε_cm",T("éq. 7.9 (plancher 0,6σ_s/E_s)","expr. 7.9 (floor 0.6σ_s/E_s)"),fmt(r.eps,6)));
-  S.push(row("s_r,max","k_3·c + k_1·k_2·k_4·φ/ρ_p,eff",fmt0(r.srmax)+" mm"));
+  S.push(row(T("espacement des barres","bar spacing"),`b / n = ${fmt0(r.esp.espacement)} mm ; 5(c + φ/2) = ${fmt0(r.esp.limite)} mm`,fmt0(r.esp.espacement)+" mm"));
+  S.push(row("s_r,max",r.esp.formule==="7.11"?"k_3·c + k_1·k_2·k_4·φ/ρ_p,eff (7.11)":T("1,3 (h − x), x = 0 (7.14 : barres trop espacées)","1.3 (h − x), x = 0 (7.14: bars too widely spaced)"),fmt0(r.srmax)+" mm"));
   S.push(row("w_k","s_r,max · (ε_sm−ε_cm)","<b>"+fmt(r.wk,3)+" mm</b>"));
   $("steps").innerHTML=S.join("");
 }
@@ -602,7 +609,7 @@ const FISS_HTML = () => `
           <div class="field"><label>${T("Résistance fck","Strength fck")}</label><input id="fck" type="number" step="1"><div class="u">MPa</div></div>
           <div class="field"><label>${T("Ciment (coeff. s)","Cement (coeff. s)")}</label><select id="s"><option value="0.20">R · ${dec("0.20")}</option><option value="0.25">N · ${dec("0.25")}</option><option value="0.38">S · ${dec("0.38")}</option></select></div>
           <div class="field"><label>${T("Âge fissuration t","Age at cracking t")}</label><input id="t" type="number" step="1" min="1"><div class="u">${T("jours","days")}</div></div>
-          <div class="field"><label>fct,eff</label><select id="mode"><option value="impose">${T("valeur imposée","imposed value")}</option><option value="auto">${T("fctm(t) par β_cc","fctm(t) by β_cc")}</option><option value="kzt">${T("k_zt · fctm (jeune âge)","k_zt · fctm (early age)")}</option><option value="tardif">${T("tardif · max(fctm ; 3,0)","late age · max(fctm; 3.0)")}</option></select></div>
+          <div class="field"><label>fct,eff</label><select id="mode"><option value="impose">${T("valeur imposée","imposed value")}</option><option value="auto">${T("fctm(t) par β_cc","fctm(t) by β_cc")}</option><option value="kzt">${T("k_zt · fctm (jeune âge)","k_zt · fctm (early age)")}</option><option value="tardif">${T("tardif · fctm (EN) ou max(fctm ; 3,0) (DIN)","late age · fctm (EN) or max(fctm; 3.0) (DIN)")}</option></select></div>
           <div class="field"><label>${T("fct,eff imposé","fct,eff imposed")}</label><input id="fcteff" type="number" step="0.1"><div class="u">MPa</div></div>
           <div class="field"><label>k_zt = fct,eff / fctm</label><input id="kzt" type="number" step="0.05" min="0.1" max="1"></div>
           <div class="note">${T("Au jeune âge, la fissuration thermique survient souvent avant 28 j. Valeur minimale conseillée ≈ 2,9 MPa si l'échéance est incertaine. Ordres de grandeur de <em>k_zt</em> : 0,65 à 3 j, 0,75 à 5 j, 0,85 à 7 j — un radier massif dépasse 7 j, donc <em>k_zt</em> tend vers 1,0.","At early age, thermal cracking often occurs before 28 days. Suggested minimum ≈ 2.9 MPa when the timing is uncertain. Orders of magnitude of <em>k_zt</em>: 0.65 at 3 days, 0.75 at 5 days, 0.85 at 7 days — a massive raft goes beyond 7 days, so <em>k_zt</em> tends to 1.0.")}</div>

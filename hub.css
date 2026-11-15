@@ -352,3 +352,8 @@ button.pj-danger{color:var(--refus)}
 .pj-changer select{font:inherit;font-size:.86rem;padding:4px 6px;border:1px solid var(--bordure);border-radius:var(--rayon-petit);background:var(--surface);color:var(--texte);max-width:260px}
 .pj-pastille{display:inline-block;min-width:1.2em;margin-right:4px;font-weight:700;text-align:center}
 .pj-v-ok{color:#2e7d4f}.pj-v-alerte{color:#b26a00}.pj-v-ko{color:#b3261e}.pj-v-perime{color:#6a6862}
+
+/* Rappel d'export des projets (audit du 10/11/2026, R7) : un avertissement, pas un refus. */
+.pj-rappel{margin:0 0 12px;padding:8px 12px;background:var(--alerte-fond);border-left:3px solid var(--alerte);
+  border-radius:var(--rayon-petit);color:var(--alerte);font-size:.82rem;line-height:1.45}
+.pj-a-exporter{color:var(--alerte);font-weight:600}
